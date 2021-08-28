@@ -40,16 +40,15 @@ Articly is a open-source & free wiki software based on Vue.js & TailwindCSS in t
 
 Install Articly for Nginx and [get started](https://github.com/KrbDevelopment/Articly-Documentation/wiki/Installation).
 
-```bash
-git clone https://github.com/KrbDevelopment/Wiki-Software && cd Wiki-Software
-```
-
 ### Installing Frontend
 ```bash
-cd Frontend
+git clone https://github.com/KrbDevelopment/Articly-Frontend
+cd Articly-Frontend
 npm i
 npm run build
 ```
+
+Copy over the .env.sample file into a file called .env. Fill out all data.
 
 Point your webserver configuration onto the `dist`-folder's index.html. Double-check if the webserver has access to your `dist`-folder by using:
 
@@ -62,7 +61,8 @@ For development purposes, you can use `npm run serve` instead of `npm run build`
 ### Installing Backend
 
 ```bash
-cd Backend
+git clone https://github.com/KrbDevelopment/Articly-Backend
+cd Articly-Backend
 composer i
 ```
 
