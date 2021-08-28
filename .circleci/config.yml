@@ -12,7 +12,7 @@ jobs:
           name: "Prepare Environment"
           command: |
             sudo apt update
-            sudo docker-php-ext-install zip http mysqli sqlite
+            sudo docker-php-ext-install zip
 
       # Download and cache dependencies
       - restore_cache:
