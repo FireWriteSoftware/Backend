@@ -2,9 +2,9 @@
   <img src="https://i.imgur.com/9kksNkw.png"/>
 </p>
 <p align="center">
-  <a href="https://on.cypress.io">Documentation</a> |
-  <a href="https://on.cypress.io/changelog">Changelog</a> |
-  <a href="https://on.cypress.io/roadmap">Roadmap</a>
+  <a href="https://github.com/KrbDevelopment/Articly-Documentation/wiki">Documentation</a> |
+  <a href="https://github.com/KrbDevelopment/Articly-Documentation/wiki/Changelog">Changelog</a> |
+  <a href="https://github.com/KrbDevelopment/Articly-Documentation/wiki/Roadmap">Roadmap</a>
 </p>
 
 
@@ -38,7 +38,7 @@ Articly is a open-source & free wiki software based on Vue.js & TailwindCSS in t
 <img src="https://i.imgur.com/K8lWuuc.png" width="200" />
 <img src="https://i.imgur.com/bzi2Ckq.png" width="200" />
 
-Install Cypress for Nginx, then [get started](./DOCUMENTATION.md).
+Install Articly for Nginx and [get started](https://github.com/KrbDevelopment/Articly-Documentation/wiki/Installation).
 
 ```bash
 git clone https://github.com/KrbDevelopment/Wiki-Software && cd Wiki-Software
@@ -96,7 +96,7 @@ php artisan optimize
 
 ## Contributing
 
-Please see our [Contributing Guideline](./CONTRIBUTING.md) which explains repo organization, linting, testing, and other steps.
+Please see our [Contributing Guideline](https://github.com/KrbDevelopment/Articly-Documentation/wiki/Contribution) which explains repo organization, linting, testing, and other steps.
 
 ## License
 
