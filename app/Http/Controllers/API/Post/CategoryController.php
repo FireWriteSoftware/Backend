@@ -63,6 +63,7 @@ class CategoryController extends BaseController
         $validator = Validator::make($request->all(), [
             'per_page' => 'integer',
             'paginate' => 'boolean',
+            'search' => 'string',
             'sort' => 'array',
             'sort.column' => 'string|required_with:sort',
             'sort.method' => 'string|required_with:sort',
@@ -79,6 +80,7 @@ class CategoryController extends BaseController
         $per_page = $request->get('per_page', 15);
         $paginate_data = $request->get('paginate', true);
         $recent = $request->get('recent', 0);
+        $search = $request->get('search');
 
         if ($recent > 0) {
             $data = $data->sortBy('updated_at', SORT_ASC)->take($recent);
@@ -91,6 +93,16 @@ class CategoryController extends BaseController
                 $request->get('sort')['column'],
                 $request->get('sort')['method'],
             );
+        }
+
+        if ($search) {
+            foreach ((new $this->model())->getFillable() as $inx => $column) {
+                if ($inx === 0) {
+                    $data = $data->where($column, 'LIKE', '%' . $search . '%');
+                } else {
+                    $data = $data->orWhere($column, 'LIKE', '%' . $search . '%');
+                }
+            }
         }
 
         if ($paginate_data) {
