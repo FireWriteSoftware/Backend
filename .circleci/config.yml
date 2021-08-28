@@ -12,6 +12,7 @@ jobs:
           name: "Prepare Environment"
           command: |
             sudo apt update
+            sudo apt install -y libsqlite3-dev zlib1g-dev
             sudo docker-php-ext-install zip
 
       # Download and cache dependencies
