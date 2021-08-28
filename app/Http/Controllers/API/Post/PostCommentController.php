@@ -18,7 +18,9 @@ class PostCommentController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->get('per_page', 15);
-        return (new PostCommentCollection(PostComment::paginate($per_page)))->additional([
+        $data = PostComment::orderByDesc('updated_at')->paginate($per_page);
+
+        return (new PostCommentCollection($data))->additional([
             'success' => true,
             'message' => 'Successfully retrieved comments'
         ]);

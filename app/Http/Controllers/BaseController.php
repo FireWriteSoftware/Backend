@@ -48,6 +48,7 @@ class BaseController extends Controller
         $validator = Validator::make($request->all(), [
             'per_page' => 'integer',
             'paginate' => 'boolean',
+            'search' => 'string',
             'sort' => 'array',
             'sort.column' => 'string|required_with:sort',
             'sort.method' => 'string|required_with:sort',
@@ -64,6 +65,7 @@ class BaseController extends Controller
         $per_page = $request->get('per_page', 15);
         $paginate_data = $request->get('paginate', true);
         $recent = $request->get('recent', 0);
+        $search = $request->get('search');
 
         if ($request->has('sort.column') && $request->has('sort.method')) {
             error_log(print_r($request->get('sort'), true));
@@ -76,6 +78,16 @@ class BaseController extends Controller
 
         if ($recent > 0) {
             $data = $data->take($recent);
+        }
+
+        if ($search) {
+            foreach ((new $this->model())->getFillable() as $inx => $column) {
+                if ($inx === 0) {
+                    $data = $data->where($column, 'LIKE', '%' . $search . '%');
+                } else {
+                    $data = $data->orWhere($column, 'LIKE', '%' . $search . '%');
+                }
+            }
         }
 
         if ($paginate_data) {
