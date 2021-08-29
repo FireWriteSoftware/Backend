@@ -343,6 +343,7 @@ class AuthController extends Controller
             $account->email_verification_code = Str::random(40);
             $account->email_verified_at = null;
             $account->save();
+            $account->sendEmailVerificationNotification();
         }
 
         return $this->sendResponse($account, 'Successfully updated user details.');
