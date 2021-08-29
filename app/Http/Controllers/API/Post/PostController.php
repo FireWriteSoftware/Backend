@@ -118,9 +118,18 @@ class PostController extends BaseController
         ]);
 
         # Didn't got it running using eloquent :(
-        $users = User::findMany(array_map(function ($q) {
+        # Post Bookmarks
+        $users = array_map(function ($q) {
             return $q->id;
-        }, DB::select("SELECT u.id FROM bookmarks b LEFT JOIN users u ON u.id = b.user_id WHERE b.post_id = :id;", ["id" => $post->id])));
+        }, DB::select("SELECT u.id FROM bookmarks b LEFT JOIN users u ON u.id = b.user_id WHERE b.post_id = :id;", ["id" => $post->id]));
+
+        # Category Bookmarks
+        $users = array_merge($users, array_map(function ($q) {
+            return $q->id;
+        }, DB::select("SELECT u.id FROM bookmarks b LEFT JOIN users u ON u.id = b.user_id WHERE b.category_id = :id;", ["id" => $post->category_id])));
+
+        ## Convert to models
+        $users = User::findMany($users);
         Notification::send($users, new BookmarkedPostUpdate($post));
 
         $post->title = $input['title'];
