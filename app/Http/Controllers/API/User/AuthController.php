@@ -75,6 +75,7 @@ class AuthController extends Controller
             ], 'User login successfully.');
         }
 
+        $user->sendSuccessfulLoginNotification();
         Activity::create([
             'issuer_type' => 0, // 0 => Unknown/Undefined
             'issuer_id' => 1,
