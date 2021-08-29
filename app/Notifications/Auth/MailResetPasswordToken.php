@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Auth;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -43,7 +43,7 @@ class MailResetPasswordToken extends Notification
     {
         return (new MailMessage)
             ->subject("Reset your password")
-            ->line("Hey, did you forget your password? Click the button to reset it.")
+            ->line("Did you forget your password? Click the button to reset it.")
             ->action('Reset Password', config('app.url_frontend') . '/password/reset?token=' . $this->token)
             ->line('Thank you for being a friend');
     }
