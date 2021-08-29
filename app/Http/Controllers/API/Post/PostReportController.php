@@ -15,7 +15,20 @@ class PostReportController extends Controller
 {
     public function index(Request $request) {
         $per_page = $request->get('per_page', 15);
-        return (new PostReportCollection(PostReport::paginate($per_page)))->additional([
+        $search = $request->get('search');
+        $data = (new PostReport);
+
+        if ($search) {
+            foreach ((new PostReport())->getFillable() as $inx => $column) {
+                if ($inx === 0) {
+                    $data = $data->where($column, 'LIKE', '%' . $search . '%');
+                } else {
+                    $data = $data->orWhere($column, 'LIKE', '%' . $search . '%');
+                }
+            }
+        }
+
+        return (new PostReportCollection($data->paginate($per_page)))->additional([
             'success' => true,
             'message' => 'Successfully retrieved reports'
         ]);
