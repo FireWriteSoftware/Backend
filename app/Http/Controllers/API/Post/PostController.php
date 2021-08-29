@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Post;
 use App\Http\Controllers\BaseController;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bookmark;
 use App\Models\Post;
 use App\Http\Resources\PostCollection;
 use App\Http\Resources\Post as PostResource;
@@ -13,7 +14,12 @@ use App\Models\PostHistory;
 use App\Http\Resources\PostHistoryCollection;
 use App\Http\Resources\PostHistory as PostHistoryResource;
 use App\Models\Tag;
+use App\Models\User;
+use App\Notifications\Posts\BookmarkedPostCreated;
+use App\Notifications\Posts\BookmarkedPostUpdate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends BaseController
@@ -103,6 +109,7 @@ class PostController extends BaseController
         }
 
         $old_post = $post;
+
         PostHistory::create([
             'post_id' => $post->id,
             'user_id' => $post->user_id,
@@ -111,6 +118,23 @@ class PostController extends BaseController
             'thumbnail' => $post->thumbnail
         ]);
 
+        if ($post->approved_at != null) {
+            # Didn't got it running using eloquent :(
+            # Post Bookmarks
+            $users = array_map(function ($q) {
+                return $q->id;
+            }, DB::select("SELECT u.id FROM bookmarks b LEFT JOIN users u ON u.id = b.user_id WHERE b.post_id = :id;", ["id" => $post->id]));
+
+            # Category Bookmarks
+            $users = array_merge($users, array_map(function ($q) {
+                return $q->id;
+            }, DB::select("SELECT u.id FROM bookmarks b LEFT JOIN users u ON u.id = b.user_id WHERE b.category_id = :id;", ["id" => $post->category_id])));
+
+            ## Convert to models
+            $users = User::findMany($users);
+            Notification::send($users, new BookmarkedPostUpdate($post));
+        }
+
         $post->title = $input['title'];
         $post->content = $input['content'];
         $post->thumbnail = $input['thumbnail'];
@@ -118,6 +142,13 @@ class PostController extends BaseController
         if ($request->has('approve') && auth()->user()->hasPermission('posts_approve')) {
             $post->approved_by = auth()->user()->id;
             $post->approved_at = now();
+
+            $users = array_map(function ($q) {
+                return $q->id;
+            }, DB::select("SELECT u.id FROM bookmarks b LEFT JOIN users u ON u.id = b.user_id WHERE b.category_id = :id;", ["id" => $post->category_id]));
+
+            $users = User::findMany($users);
+            Notification::send($users, new BookmarkedPostCreated($post));
         }
 
         $post->save();
