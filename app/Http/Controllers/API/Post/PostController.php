@@ -69,6 +69,13 @@ class PostController extends BaseController
         $data = array_merge($request->all(), $this->additionalCreateData);
         $created_object = $this->model::create($data);
 
+        $users = array_map(function ($q) {
+            return $q->id;
+        }, DB::select("SELECT u.id FROM bookmarks b LEFT JOIN users u ON u.id = b.user_id WHERE b.category_id = :id;", ["id" => $created_object->category_id]));
+
+        $users = User::findMany($users);
+        Notification::send($users, new BookmarkedPostCreated($created_object));
+
         $tags = Tag::findMany($request->tags);
         foreach ($tags as $tag) {
             $created_object->tags()->save($tag);
