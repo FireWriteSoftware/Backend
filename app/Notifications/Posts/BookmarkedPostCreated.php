@@ -2,6 +2,7 @@
 
 namespace App\Notifications\Posts;
 
+use App\Models\Post;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,14 +12,16 @@ class BookmarkedPostCreated extends Notification
 {
     use Queueable;
 
+    protected $post;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Post $post)
     {
-        //
+        $this->post = $post;
     }
 
     /**

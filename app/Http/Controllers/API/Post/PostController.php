@@ -15,6 +15,7 @@ use App\Http\Resources\PostHistoryCollection;
 use App\Http\Resources\PostHistory as PostHistoryResource;
 use App\Models\Tag;
 use App\Models\User;
+use App\Notifications\Posts\BookmarkedPostCreated;
 use App\Notifications\Posts\BookmarkedPostUpdate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
