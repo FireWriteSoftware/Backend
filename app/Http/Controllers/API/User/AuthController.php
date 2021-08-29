@@ -75,7 +75,15 @@ class AuthController extends Controller
             ], 'User login successfully.');
         }
 
-        $user->sendSuccessfulLoginNotification();
+        $user = null;
+        if ($request->has('email')) {
+            $user = User::where('email', $request->get('email'))->first();
+        } else {
+            $user = User::where('name', $request->get('name'))->first();
+        }
+
+        $user->sendFailedLoginNotification();
+
         Activity::create([
             'issuer_type' => 0, // 0 => Unknown/Undefined
             'issuer_id' => 1,
