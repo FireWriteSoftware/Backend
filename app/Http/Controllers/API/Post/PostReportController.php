@@ -28,7 +28,7 @@ class PostReportController extends Controller
             }
         }
 
-        return (new PostReportCollection($data::paginate($per_page)))->additional([
+        return (new PostReportCollection($data->paginate($per_page)))->additional([
             'success' => true,
             'message' => 'Successfully retrieved reports'
         ]);
