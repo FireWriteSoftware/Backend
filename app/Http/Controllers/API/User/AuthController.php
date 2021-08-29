@@ -59,6 +59,7 @@ class AuthController extends Controller
 
             $now = now();
             $user->sendActivity('Successful login.', "$user->name [$user->id] logged in on $now", $user);
+            $user->sendSuccessfulLoginNotification();
 
             return $this->sendResponse([
                 'token' => $user->createToken('PersonalAccessToken')->accessToken,
@@ -73,6 +74,15 @@ class AuthController extends Controller
                 ])
             ], 'User login successfully.');
         }
+
+        $user = null;
+        if ($request->has('email')) {
+            $user = User::where('email', $request->get('email'))->first();
+        } else {
+            $user = User::where('name', $request->get('name'))->first();
+        }
+
+        $user->sendFailedLoginNotification();
 
         Activity::create([
             'issuer_type' => 0, // 0 => Unknown/Undefined
@@ -236,6 +246,7 @@ class AuthController extends Controller
 
         $user->password = Hash::make($request->password);
         $user->save();
+        $user->sendPasswordChangedNotification();
 
         DB::table('password_resets')->where('email', $user->email)->delete();
 
@@ -266,6 +277,7 @@ class AuthController extends Controller
 
         $user->password = Hash::make($request['password']);
         $user->save();
+        $user->sendPasswordChangedNotification();
         $user->sendActivity('Password-Reset has been performed', 'The password has been changed through the profile or an admin.');
 
         return $this->sendResponse([], 'Password changed successfully');
@@ -319,8 +331,20 @@ class AuthController extends Controller
             return $this->sendError('Invalid user', ['user_id' => $account_id]);
         }
 
+        $changedEmail = $account->email !== $request->get('email');
+        if ($changedEmail) {
+            $account->sendEmailChangedNotification();
+        }
+
         $account->update($request->all());
         $account->sendActivity('Account details has been changed', 'The profile details has been changed through the profile or an admin');
+
+        if ($changedEmail) {
+            $account->email_verification_code = Str::random(40);
+            $account->email_verified_at = null;
+            $account->save();
+            $account->sendEmailVerificationNotification();
+        }
 
         return $this->sendResponse($account, 'Successfully updated user details.');
     }
