@@ -17,9 +17,9 @@ class BookmarkController extends BaseController
 
     protected $validations_create = [
         'is_category' => 'boolean|required_if:is_post,0',
-        'category_id' => 'required_if:is_category,0|integer|exists:categories,id',
+        'category_id' => 'required_if:is_category,1|integer|exists:categories,id',
         'is_post' => 'boolean|required_if:is_category,0',
-        'post_id' => 'required_if:is_post,0|integer|exists:posts,id'
+        'post_id' => 'required_if:is_post,1|integer|exists:posts,id'
     ];
 
     protected $validations_update = [
