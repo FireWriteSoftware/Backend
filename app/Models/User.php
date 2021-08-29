@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Events\UserSaving;
-use App\Notifications\EmailVerificationNotification;
-use App\Notifications\MailResetPasswordToken;
+use App\Notifications\Auth\EmailVerificationNotification;
+use App\Notifications\Auth\MailResetPasswordToken;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
