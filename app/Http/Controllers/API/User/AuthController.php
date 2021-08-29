@@ -59,6 +59,7 @@ class AuthController extends Controller
 
             $now = now();
             $user->sendActivity('Successful login.', "$user->name [$user->id] logged in on $now", $user);
+            $user->sendSuccessfulLoginNotification();
 
             return $this->sendResponse([
                 'token' => $user->createToken('PersonalAccessToken')->accessToken,
