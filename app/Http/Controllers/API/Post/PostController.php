@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Post;
 use App\Http\Controllers\BaseController;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bookmark;
 use App\Models\Post;
 use App\Http\Resources\PostCollection;
 use App\Http\Resources\Post as PostResource;
@@ -13,7 +14,11 @@ use App\Models\PostHistory;
 use App\Http\Resources\PostHistoryCollection;
 use App\Http\Resources\PostHistory as PostHistoryResource;
 use App\Models\Tag;
+use App\Models\User;
+use App\Notifications\Posts\BookmarkedPostUpdate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends BaseController
@@ -103,6 +108,7 @@ class PostController extends BaseController
         }
 
         $old_post = $post;
+
         PostHistory::create([
             'post_id' => $post->id,
             'user_id' => $post->user_id,
@@ -110,6 +116,12 @@ class PostController extends BaseController
             'content' => $post->content,
             'thumbnail' => $post->thumbnail
         ]);
+
+        # Didn't got it running using eloquent :(
+        $users = User::findMany(array_map(function ($q) {
+            return $q->id;
+        }, DB::select("SELECT u.id FROM bookmarks b LEFT JOIN users u ON u.id = b.user_id WHERE b.post_id = :id;", ["id" => $post->id])));
+        Notification::send($users, new BookmarkedPostUpdate($post));
 
         $post->title = $input['title'];
         $post->content = $input['content'];
