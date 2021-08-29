@@ -236,6 +236,7 @@ class AuthController extends Controller
 
         $user->password = Hash::make($request->password);
         $user->save();
+        $user->sendPasswordChangedNotification();
 
         DB::table('password_resets')->where('email', $user->email)->delete();
 
@@ -266,6 +267,7 @@ class AuthController extends Controller
 
         $user->password = Hash::make($request['password']);
         $user->save();
+        $user->sendPasswordChangedNotification();
         $user->sendActivity('Password-Reset has been performed', 'The password has been changed through the profile or an admin.');
 
         return $this->sendResponse([], 'Password changed successfully');
