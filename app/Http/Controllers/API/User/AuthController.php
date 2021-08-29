@@ -331,13 +331,18 @@ class AuthController extends Controller
             return $this->sendError('Invalid user', ['user_id' => $account_id]);
         }
 
-        $old_email = $account->email;
+        $changedEmail = $account->email !== $request->get('email');
+        if ($changedEmail) {
+            $account->sendEmailChangedNotification();
+        }
 
         $account->update($request->all());
         $account->sendActivity('Account details has been changed', 'The profile details has been changed through the profile or an admin');
 
-        if ($old_email !== $request->get('email')) {
-            $account->sendEmailChangedNotification();
+        if ($changedEmail) {
+            $account->email_verification_code = Str::random(40);
+            $account->email_verified_at = null;
+            $account->save();
         }
 
         return $this->sendResponse($account, 'Successfully updated user details.');
