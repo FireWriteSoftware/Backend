@@ -67,7 +67,7 @@ class NotificationController extends BaseController
         $data = Notification::where('user_id', auth()->user()->id);
 
         if ($unseen) {
-            $data->where('seen', null);
+            $data->where('seen', !$unseen);
         }
 
         return (new NotificationCollection($data->paginate($per_page)))->additional([
