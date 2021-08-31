@@ -1,17 +1,7 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Validation Language Lines
-|--------------------------------------------------------------------------
-|
-| The following language lines contain the default error messages used by
-| the validator class. Some of these rules have multiple versions such
-| as the size rules. Feel free to tweak each of these messages here.
-|
-*/
-
 return [
+    'validation_error'     => 'Ein Validierungsfehler ist aufgetreten.',
     'accepted'             => ':attribute muss akzeptiert werden.',
     'accepted_if'          => ':attribute muss akzeptiert werden, wenn :other :value ist.',
     'active_url'           => ':attribute ist keine gültige Internet-Adresse.',
