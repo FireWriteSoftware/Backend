@@ -57,14 +57,14 @@ class PostController extends BaseController
                     'banned' => true,
                     'bans' => $active_bans
                 ],
-                'message' => "User has post ban",
+                'message' => __('ban.is_post'),
             ], 403);
         }
 
         $validator = Validator::make($request->all(), $this->validations_create);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = array_merge($request->all(), $this->additionalCreateData);
@@ -76,22 +76,22 @@ class PostController extends BaseController
         }
 
         if (is_null($created_object)) {
-            return $this->sendError('Unknown error while creating the model', [], 500);
+            return $this->sendError(__('base.base.store_unknown_error'), [], 500);
         }
 
         $response = new $this->resource($created_object);
-        return $this->sendResponse($response, 'Successfully stored item');
+        return $this->sendResponse($response, __('base.base.store_success'));
     }
 
     public function update(Request $request, $post_id) {
         $post = Post::find($post_id);
 
         if (is_null($post)) {
-            return $this->sendError('Post does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         if (!auth()->user()->hasPermission('posts_update') && $post->user_id !== auth()->user()->id) {
-            return $this->sendError('Access denied.', []);
+            return $this->sendError(__('permission.no_permission'), []);
         }
 
         $input = $request->all();
@@ -105,7 +105,7 @@ class PostController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $old_post = $post;
@@ -156,7 +156,7 @@ class PostController extends BaseController
         return $this->sendResponse([
             'post' => new PostResource($post),
             'history_post' => new PostResource($old_post)
-        ], 'Post updated successfully.');
+        ], __('base.base.update_success'));
     }
 
     public function get_unauthorized_posts(Request $request) {
@@ -183,7 +183,7 @@ class PostController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = $this->model::where('approved_by', null);
@@ -227,7 +227,7 @@ class PostController extends BaseController
 
             $response = $response::additional(array_merge([
                 'success' => true,
-                'message' => 'Successfully retrieved posts'
+                'message' => __('base.base.get_all_success')
             ],
                 $additional));
         }
@@ -238,6 +238,6 @@ class PostController extends BaseController
     public function recent_posts() {
         return $this->sendResponse([
             'posts' => new $this->collection(Post::where('approved_at', '!=', null)->limit(5)->orderByDesc('updated_at')->get()),
-        ], 'Successfully retrieved recent posts');
+        ], __('base.base.get_all_success'));
     }
 }

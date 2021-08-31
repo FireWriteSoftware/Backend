@@ -38,7 +38,7 @@ class NotificationController extends BaseController
         $user = User::find($user_id);
 
         if (is_null($user)) {
-            return $this->sendError('User does not exists.');
+            return $this->sendError(__('base.relation.invalid_parent'));
         }
 
         $per_page = $request->get('per_page', 15);
@@ -52,7 +52,7 @@ class NotificationController extends BaseController
 
         return (new NotificationCollection($data->paginate($per_page)))->additional([
             'success' => true,
-            'message' => 'Successfully retrieved user notifications'
+            'message' => __('base.relation.get_all_success')
         ]);
     }
 
@@ -67,12 +67,12 @@ class NotificationController extends BaseController
         $data = Notification::where('user_id', auth()->user()->id);
 
         if ($unseen) {
-            $data->where('seen', null);
+            $data->where('seen', !$unseen);
         }
 
         return (new NotificationCollection($data->paginate($per_page)))->additional([
             'success' => true,
-            'message' => 'Successfully retrieved own notifications'
+            'message' => __('base.relation.get_all_success')
         ]);
     }
 }
