@@ -116,7 +116,7 @@ class CategoryController extends BaseController
 
             $response = $response::additional(array_merge([
                 'success' => true,
-                'message' => 'Successfully retrieved announcements'
+                'message' => __('base.base.get_all_success')
             ],
                 $additional));
         }
@@ -148,10 +148,10 @@ class CategoryController extends BaseController
                 $response = (new NoDepthCategory($item))->onlyVerified(true);
             }
 
-            return $this->sendResponse($response, 'Successfully fetched item');
+            return $this->sendResponse($response, __('base.base.get_success'));
         } else {
             $data = $this->model::where('parent_id', null)->get();
-            return $this->sendResponse(new MiniCategoryCollection($data), 'Successfully fetched items of page 0');
+            return $this->sendResponse(new MiniCategoryCollection($data), __('base.base.get_success'));
         }
     }
 }
