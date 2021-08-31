@@ -18,7 +18,7 @@ class Authenticate extends Middleware
         $response = [
             'success' => false,
             'data'    => [],
-            'message' => "Not authenticated",
+            'message' => __('auth.unauthenticated'),
         ];
 
         Activity::create([

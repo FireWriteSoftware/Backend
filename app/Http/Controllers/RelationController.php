@@ -22,12 +22,12 @@ class RelationController extends Controller
         $parent = $this->parentModel::find($parent_id);
 
         if (is_null($parent)) {
-            return  $this->sendError('Invalid parent id.', ['parent_id' => $parent_id]);
+            return  $this->sendError(__('base.relation.invalid_parent'), ['parent_id' => $parent_id]);
         }
 
         return (new $this->collection($parent->relations->paginate($per_page)))->additional([
             'success' => true,
-            'message' => 'Successfully retrieved relation data'
+            'message' => __('base.relation.get_all_success')
         ]);
     }
 
@@ -36,20 +36,20 @@ class RelationController extends Controller
         $parent = $this->parentModel::find($parent_id);
 
         if (is_null($parent)) {
-            return  $this->sendError('Invalid parent id.', ['parent_id' => $parent_id]);
+            return  $this->sendError(__('base.relation.invalid_parent'), ['parent_id' => $parent_id]);
         }
 
         $child = $this->childModel::find($child_id);
 
         if (is_null($child)) {
-            return  $this->sendError('Invalid child id.', ['child_id' => $parent_id]);
+            return  $this->sendError(__('base.relation.invalid_parent'), ['child_id' => $parent_id]);
         }
 
         $is_attached = $parent->relations->contains($child);
 
         return $this->sendResponse([
             'attached' => $is_attached
-        ], 'Successfully checked relation');
+        ], __('base.relation.checked_success'));
     }
 
     public function attach(Request $request, $parent_id, $child_id): JsonResponse
@@ -57,18 +57,18 @@ class RelationController extends Controller
         $parent = $this->parentModel::find($parent_id);
 
         if (is_null($parent)) {
-            return  $this->sendError('Invalid parent id.', ['parent_id' => $parent_id]);
+            return  $this->sendError(__('base.relation.invalid_parent'), ['parent_id' => $parent_id]);
         }
 
         $child = $this->childModel::find($child_id);
 
         if (is_null($child)) {
-            return  $this->sendError('Invalid child id.', ['child_id' => $parent_id]);
+            return  $this->sendError(__('base.relation.invalid_child'), ['child_id' => $parent_id]);
         }
 
         $parent->relations()->attach($child);
 
-        return $this->sendResponse([], 'Successfully attached relation');
+        return $this->sendResponse([], __('base.relation.attached_success'));
     }
 
     public function detach(Request $request, $parent_id, $child_id): JsonResponse
@@ -76,17 +76,17 @@ class RelationController extends Controller
         $parent = $this->parentModel::find($parent_id);
 
         if (is_null($parent)) {
-            return  $this->sendError('Invalid parent id.', ['parent_id' => $parent_id]);
+            return  $this->sendError(__('base.relation.invalid_parent'), ['parent_id' => $parent_id]);
         }
 
         $child = $this->childModel::find($child_id);
 
         if (is_null($child)) {
-            return  $this->sendError('Invalid child id.', ['child_id' => $parent_id]);
+            return  $this->sendError(__('base.relation.invalid_child'), ['child_id' => $parent_id]);
         }
 
         $parent->relations()->detach($child);
 
-        return $this->sendResponse([], 'Successfully detached relation');
+        return $this->sendResponse([], __('base.relation.detached_success'));
     }
 }

@@ -22,7 +22,7 @@ class PostCommentController extends Controller
 
         return (new PostCommentCollection($data))->additional([
             'success' => true,
-            'message' => 'Successfully retrieved comments'
+            'message' => __('base.base.get_all_success')
         ]);
     }
 
@@ -31,13 +31,13 @@ class PostCommentController extends Controller
         $post = Post::find($post_id);
 
         if (is_null($post)) {
-            return $this->sendError('Post does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $per_page = $request->get('per_page', 15);
         return (new PostCommentCollection(PostComment::where('post_id', $post->id)->paginate($per_page)))->additional([
             'success' => true,
-            'message' => 'Successfully retrieved post comments'
+            'message' => __('base.base.get_all_success')
         ]);
     }
 
@@ -45,10 +45,10 @@ class PostCommentController extends Controller
         $comment = PostComment::find($id);
 
         if (is_null($comment)) {
-            return $this->sendError('Post Comment does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
-        return $this->sendResponse(new PostCommentResource($comment), 'Post Comment retrieved successfully.');
+        return $this->sendResponse(new PostCommentResource($comment), __('base.base.get_success'));
     }
 
     public function store(Request $request, $post_id): JsonResponse
@@ -66,14 +66,14 @@ class PostCommentController extends Controller
                     'banned' => true,
                     'bans' => $active_bans
                 ],
-                'message' => "User has comment ban",
+                'message' => __('ban.is_comment'),
             ], 403);
         }
 
         $post = Post::find($post_id);
 
         if (is_null($post)) {
-            return $this->sendError('Post does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $input = $request->all();
@@ -83,25 +83,25 @@ class PostCommentController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         if (!auth()->user()->email_verified_at) {
-            return $this->sendError('Not permitted.', ['errors' => ['You need a verified email address to write a comment']], 403);
+            return $this->sendError(__('ban.is_comment'), ['errors' => [__('ban.comment_ban_reason')]], 403);
         }
 
         $input['post_id'] = $post_id;
         $input['user_id'] = auth()->user()->id;
 
         $comment = PostComment::create($input);
-        return $this->sendResponse(new PostCommentResource($comment), 'Post Comment created successfully');
+        return $this->sendResponse(new PostCommentResource($comment), __('base.base.store_success'));
     }
 
     public function update(Request $request, $comment_id) {
         $comment = PostComment::find($comment_id);
 
         if (is_null($comment)) {
-            return $this->sendError('Post Comment does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $input = $request->all();
@@ -111,24 +111,24 @@ class PostCommentController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $comment->content = $input['content'];
         $comment->save();
 
-        return $this->sendResponse(new PostCommentResource($comment), 'Post Comment updated successfully.');
+        return $this->sendResponse(new PostCommentResource($comment), __('base.base.update_success'));
     }
 
     public function destroy($comment_id) {
         $comment = PostComment::find($comment_id);
 
         if (is_null($comment)) {
-            return $this->sendError('Post Comment does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $comment->delete();
 
-        return $this->sendResponse([], 'Post Comment soft-deleted successfully.');
+        return $this->sendResponse([], __('base.base.soft_delete_success'));
     }
 }
