@@ -70,7 +70,7 @@ class PostHistoryController extends Controller
 
             $response = $response::additional(array_merge([
                 'success' => true,
-                'message' => 'Successfully retrieved announcements'
+                'message' => __('base.base.get_all_success')
             ],
                 $additional));
         }
