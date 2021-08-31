@@ -28,7 +28,7 @@ class StorageController extends Controller
             [
                 'url' => config('app.url') . $storage_url
             ],
-            'Image has been successfully uploaded');
+            __('storage.image_uploaded'));
     }
 
     public function uploadEditor(Request $request) {
@@ -45,7 +45,7 @@ class StorageController extends Controller
 
         return [
             'success' => true,
-            'message' => 'Image has been successfully uploaded',
+            'message' => __('storage.image_uploaded'),
             'url' => config('app.url') . $storage_url
         ];
     }
