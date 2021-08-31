@@ -17,6 +17,7 @@ return [
     'relation' => [
         'invalid_parent' => 'Invalid parent submitted.',
         'invalid_child' => 'Invalid child submitted.',
+        'not_belongs' => 'Parent and child doesn\'t belong to each other.',
         'get_all_success' => 'Successfully retrieved relation data.',
         'checked_success' => 'Successfully verified relationship of items.',
         'attached_success' => 'Successfully attached child to parent.',

@@ -19,12 +19,12 @@ class UserBansController extends Controller
         $user = User::find($user_id);
 
         if (is_null($user)) {
-            return  $this->sendError('Invalid user id.', ['user_id' => $user_id]);
+            return  $this->sendError(__('base.relation.invalid_parent'), ['user_id' => $user_id]);
         }
 
         return (new UserBanCollection($user->bans->paginate($per_page)))->additional([
             'success' => true,
-            'message' => 'Successfully retrieved user bans'
+            'message' => __('base.base.get_all_success')
         ]);
     }
 
@@ -32,7 +32,7 @@ class UserBansController extends Controller
         $user = User::find($user_id);
 
         if (is_null($user)) {
-            return  $this->sendError('Invalid user id.', ['user_id' => $user_id]);
+            return  $this->sendError(__('base.relation.invalid_parent'), ['user_id' => $user_id]);
         }
 
         $input = $request->all();
@@ -54,14 +54,14 @@ class UserBansController extends Controller
 
         $user->bans()->save($ban);
 
-        return $this->sendResponse(new BanResource($ban), 'Successfully added ban to user');
+        return $this->sendResponse(new BanResource($ban), __('base.relation.attached_success'));
     }
 
     public function show($user_id, $ban_id) {
         $user = User::find($user_id);
 
         if (is_null($user)) {
-            return  $this->sendError('Invalid user id.', ['user_id' => $user_id]);
+            return  $this->sendError(__('base.relation.invalid_parent'), ['user_id' => $user_id]);
         }
 
         foreach ($user->bans as $ban) {
@@ -69,29 +69,29 @@ class UserBansController extends Controller
                 $found_ban = Ban::find($ban_id);
 
                 if (!is_null($found_ban)) {
-                    return $this->sendResponse(new BanResource($found_ban), 'Successfully fetched ban of user');
+                    return $this->sendResponse(new BanResource($found_ban), __('base.base.get_success'));
                 }
             }
         }
 
-        return $this->sendError('Ban does not belong to user', ['user_id' => $user_id, 'ban_id' => $ban_id]);
+        return $this->sendError(__('base.relation.not_belongs'), ['user_id' => $user_id, 'ban_id' => $ban_id]);
     }
 
     public function destroy($user_id, $ban_id) {
         $user = User::find($user_id);
 
         if (is_null($user)) {
-            return  $this->sendError('Invalid user id.', ['user_id' => $user]);
+            return  $this->sendError(__('base.relation.invalid_parent'), ['user_id' => $user]);
         }
 
         foreach ($user->bans as $ban) {
             if ($ban->id == $ban_id) {
                 $user->bans()->find($ban_id)->delete();
-                return $this->sendResponse([], 'Successfully removed ban from user');
+                return $this->sendResponse([], __('base.relation.detached_success'));
             }
         }
 
-        return $this->sendError('User has no ban with this id', ['user_id' => $user_id->id, 'ban_id' => $ban_id]);
+        return $this->sendError(__('base.relation.invalid_child'), ['user_id' => $user_id->id, 'ban_id' => $ban_id]);
     }
 
     public function count_bans($user_id) {
@@ -102,7 +102,7 @@ class UserBansController extends Controller
             'comments' => $bans->where('type', '=', 1)->count(),
             'posts' => $bans->where('type', '=', 2)->count()
         ],
-            'Ban count retrieved successfully');
+            __('user.ban_count'));
     }
 
     public function unban(Request $request, User $user) {
@@ -113,6 +113,6 @@ class UserBansController extends Controller
             }
         }
 
-        return $this->sendResponse(['bans' => new BanCollection($user->bans)], 'User unbanned successfully.');
+        return $this->sendResponse(['bans' => new BanCollection($user->bans)], __('user.unbanned'));
     }
 }
