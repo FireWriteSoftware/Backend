@@ -48,7 +48,7 @@ class AuthController extends Controller
 
             if (sizeof($active_bans) > 0) {
                 return $this->sendError(
-                    "User has global ban",
+                    __('ban.is_global'),
                     [
                         'banned' => true,
                         'bans' => $active_bans
@@ -72,7 +72,7 @@ class AuthController extends Controller
                     'role_id',
                     'profile_picture'
                 ])
-            ], 'User login successfully.');
+            ], __('auth.login_success'));
         }
 
         $user = null;
@@ -87,12 +87,12 @@ class AuthController extends Controller
         Activity::create([
             'issuer_type' => 0, // 0 => Unknown/Undefined
             'issuer_id' => 1,
-            'short' => 'Failed login.',
+            'short' => __('auth.login_failed'),
             'details' => "{$request->ip()} failed to log in into account",
             'attributes' => json_encode($request->all())
         ]);
 
-        return $this->sendError('Unauthorised.', ['error' => 'Login failed.']);
+        return $this->sendError(__('auth.login_failed'), ['error' => 'Login failed.']);
     }
 
     /**
@@ -139,7 +139,7 @@ class AuthController extends Controller
             'profile_picture'
         ]);
 
-        return $this->sendResponse($success, 'User register successfully.');
+        return $this->sendResponse($success, __('auth.register_success'));
     }
 
     /**
@@ -162,7 +162,7 @@ class AuthController extends Controller
 
         return $this->sendResponse([
             'user' => Auth::user() ?? null
-        ], 'User returned successfully.');
+        ], __('auth.get_details'));
     }
 
     /**
@@ -175,7 +175,7 @@ class AuthController extends Controller
     {
         Auth::user()->sendActivity('Logged out', 'User has logged out and token has been revoked.');
         Auth::user()->token()->revoke();
-        return $this->sendResponse([], 'User Logged Out');
+        return $this->sendResponse([], __('auth.logged_out'));
     }
 
     /**
@@ -198,7 +198,7 @@ class AuthController extends Controller
         $user = User::where('email', $input['email'])->first();
 
         if (!$user->exists()) {
-            return $this->sendError('This email does not belong to any users', ['email' => $input['email']]);
+            return $this->sendError(__('auth.invalid_email'), ['email' => $input['email']]);
         }
 
         $token = Str::random(40);
@@ -213,7 +213,7 @@ class AuthController extends Controller
 
         $user->sendActivity('Password-Reset-Email has been sent.', 'A mail to reset the password has been sent to ' . $user->email, $user);
 
-        return $this->sendResponse([], 'Mail has been sent');
+        return $this->sendResponse([], __('user.reset_mail_success'));
     }
 
     /**
@@ -235,12 +235,12 @@ class AuthController extends Controller
         }
 
         $tokenData = DB::table('password_resets')->where('token', $request->token)->first();
-        if (!$tokenData) return $this->sendError('Invalid token.', [
+        if (!$tokenData) return $this->sendError(__('auth.invalid_reset_token'), [
             'errors' => []
         ]);
 
         $user = User::where('email', $request->email)->first();
-        if (!$user) return $this->sendError('Invalid token.', [
+        if (!$user) return $this->sendError(__('auth.invalid_reset_token'), [
             'errors' => []
         ]);
 
@@ -250,7 +250,7 @@ class AuthController extends Controller
 
         DB::table('password_resets')->where('email', $user->email)->delete();
 
-        return $this->sendResponse([], 'Successfully resetted password.');
+        return $this->sendResponse([], __('user.password_changed_success'));
     }
 
     /**
@@ -272,7 +272,7 @@ class AuthController extends Controller
         $user = Auth::user();
 
         if (!Hash::check($request->input('old_password'), $user->password)) {
-            return $this->sendError('Invalid credentials.', []);
+            return $this->sendError(__('auth.invalid_password'), []);
         }
 
         $user->password = Hash::make($request['password']);
@@ -280,7 +280,7 @@ class AuthController extends Controller
         $user->sendPasswordChangedNotification();
         $user->sendActivity('Password-Reset has been performed', 'The password has been changed through the profile or an admin.');
 
-        return $this->sendResponse([], 'Password changed successfully');
+        return $this->sendResponse([], __('auth.password_changed_success'));
     }
 
     /**
@@ -301,7 +301,7 @@ class AuthController extends Controller
         $user = User::where('email_verification_code', $request->input('token'))->first();
 
         if (!$user) {
-            return $this->sendError('Invalid token.', []);
+            return $this->sendError(__('auth.invalid_reset_token'), []);
         }
 
         $user->email_verification_code = '';
@@ -309,7 +309,7 @@ class AuthController extends Controller
         $user->save();
         $user->sendActivity('Email-Verification passed', 'The email has been verified trough the email-verification.');
 
-        return $this->sendResponse([], 'Email confirmed successfully');
+        return $this->sendResponse([], __('user.verify_mail_success'));
     }
 
     public function update_details(Request $request, $account_id) {
@@ -328,7 +328,7 @@ class AuthController extends Controller
         $account = User::find($account_id);
 
         if (is_null($account)) {
-            return $this->sendError('Invalid user', ['user_id' => $account_id]);
+            return $this->sendError(__('base.base.get_not_found'), ['user_id' => $account_id]);
         }
 
         $changedEmail = $account->email !== $request->get('email');
@@ -346,6 +346,6 @@ class AuthController extends Controller
             $account->sendEmailVerificationNotification();
         }
 
-        return $this->sendResponse($account, 'Successfully updated user details.');
+        return $this->sendResponse($account, __('base.base.update_success'));
     }
 }
