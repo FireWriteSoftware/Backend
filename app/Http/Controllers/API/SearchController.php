@@ -62,6 +62,6 @@ class SearchController extends Controller
             "tags" => $tag_posts
         ];
 
-        return $this->sendResponse($query, 'Successfully searched data');
+        return $this->sendResponse($query, __('search.search_success', ['keyword' => $exact_term]));
     }
 }
