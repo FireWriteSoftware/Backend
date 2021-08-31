@@ -52,11 +52,11 @@ class RoleController extends BaseController
         $created_object = $this->model::create($data);
 
         if (is_null($created_object)) {
-            return $this->sendError('Unknown error while creating the model', [], 500);
+            return $this->sendError(__('base.base.store_unknown_error'), [], 500);
         }
 
         $response = new $this->resource($created_object);
-        return $this->sendResponse($response, 'Successfully stored item');
+        return $this->sendResponse($response, __('base.base.store_success'));
     }
 
     /**
@@ -85,10 +85,10 @@ class RoleController extends BaseController
 
         $saved = $item->save();
         $response = new $this->resource($item);
-        $message = 'Item updated successfully.';
+        $message = __('base.base.update_success');
 
         if (!$saved) {
-            $message = 'Item has been skipped, because no columns has been updated.';
+            $message = __('base.base.update_skipped');
         }
 
         return $this->sendResponse($response, $message);
