@@ -43,7 +43,7 @@ class RoleController extends BaseController
         $validator = Validator::make($request->all(), $this->validations_create);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $this->model::where('is_default', 1)->update(['is_default' => 0]);
@@ -52,11 +52,11 @@ class RoleController extends BaseController
         $created_object = $this->model::create($data);
 
         if (is_null($created_object)) {
-            return $this->sendError('Unknown error while creating the model', [], 500);
+            return $this->sendError(__('base.base.store_unknown_error'), [], 500);
         }
 
         $response = new $this->resource($created_object);
-        return $this->sendResponse($response, 'Successfully stored item');
+        return $this->sendResponse($response, __('base.base.store_success'));
     }
 
     /**
@@ -70,13 +70,13 @@ class RoleController extends BaseController
         $validator = Validator::make($request->all(), $this->validations_update);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $item = $this->model::find($id);
 
         if (is_null($item)) {
-            return $this->sendError('Item does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $this->model::where('is_default', 1)->update(['is_default' => 0]);
@@ -85,10 +85,10 @@ class RoleController extends BaseController
 
         $saved = $item->save();
         $response = new $this->resource($item);
-        $message = 'Item updated successfully.';
+        $message = __('base.base.update_success');
 
         if (!$saved) {
-            $message = 'Item has been skipped, because no columns has been updated.';
+            $message = __('base.base.update_skipped');
         }
 
         return $this->sendResponse($response, $message);

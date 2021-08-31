@@ -34,7 +34,7 @@ class CheckBan
                     'banned' => true,
                     'bans' => $active_bans
                 ],
-                'message' => "User has global ban",
+                'message' => __('is_global'),
             ], 403);
         }
 

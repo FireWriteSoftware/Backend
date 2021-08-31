@@ -25,13 +25,15 @@ class RolesAuth
                 $response = [
                     'success' => false,
                     'data'    => $permission,
-                    'message' => "Missing permission to access.",
+                    'message' => __('permission.no_permission', [
+                        'permission' => $permission
+                    ]),
                 ];
 
                 Activity::create([
                     'issuer_type' => 0, // 0 => Unknown/Undefined
                     'issuer_id' => 1,
-                    'short' => 'Unauthenticated access',
+                    'short' => 'Missing permission',
                     'details' => $request->user()->name . " [" . $request->user()->id . "] tried to access on " . url()->full() . " without permissions.",
                     'attributes' => '{}'
                 ]);
