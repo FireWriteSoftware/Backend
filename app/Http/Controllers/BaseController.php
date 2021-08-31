@@ -103,7 +103,7 @@ class BaseController extends Controller
 
             $response = $response::additional(array_merge([
                 'success' => true,
-                'message' => 'Successfully retrieved data'
+                'message' => __('base.base.get_all_success+')
             ],
             $additional));
         }
@@ -121,11 +121,11 @@ class BaseController extends Controller
     {
         $item = $this->model::find($id);
         if (is_null($item)) {
-            return $this->sendError('Item does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $response = new $this->resource($item);
-        return $this->sendResponse($response, 'Successfully fetched item');
+        return $this->sendResponse($response, __('base.base.get_success'));
     }
 
     /**
@@ -145,11 +145,11 @@ class BaseController extends Controller
         $created_object = $this->model::create($data);
 
         if (is_null($created_object)) {
-            return $this->sendError('Unknown error while creating the model', [], 500);
+            return $this->sendError(__('base.base.store_unknown_error'), [], 500);
         }
 
         $response = new $this->resource($created_object);
-        return $this->sendResponse($response, 'Successfully stored item');
+        return $this->sendResponse($response, __('base.base.store_success'));
     }
 
     /**
@@ -169,17 +169,17 @@ class BaseController extends Controller
         $item = $this->model::find($id);
 
         if (is_null($item)) {
-            return $this->sendError('Item does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $item->update($request->all());
 
         $saved = $item->save();
         $response = new $this->resource($item);
-        $message = 'Item updated successfully.';
+        $message = __('base.base.update_success');
 
         if (!$saved) {
-            $message = 'Item has been skipped, because no columns has been updated.';
+            $message = __('base.base.update_skipped');
         }
 
         return $this->sendResponse($response, $message);
@@ -196,14 +196,14 @@ class BaseController extends Controller
         $item = $this->model::find($id);
 
         if (is_null($item)) {
-            return $this->sendError('Item does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $item->delete();
 
         return $this->sendResponse([
             'id' => $id
-        ], 'Item soft-deleted successfully.');
+        ], __('base.base.soft_delete_success'));
     }
 
     /**
@@ -217,14 +217,14 @@ class BaseController extends Controller
         $item = $this->model::withTrashed()->find($id);
 
         if (is_null($item)) {
-            return $this->sendError('Item does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $item->forceDelete();
 
         return $this->sendResponse([
             'id' => $id
-        ], 'Item force-deleted successfully.');
+        ], __('base.base.force_delete_success'));
     }
 
     /**
@@ -237,12 +237,12 @@ class BaseController extends Controller
         $item = $this->model::withTrashed()->find($id);
 
         if (is_null($item)) {
-            return $this->sendError('Item does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $item->restore();
         $response = (new $this->resource($item));
 
-        return $this->sendResponse($response, 'Item recovered successfully.');
+        return $this->sendResponse($response, __('base.base.recover_success'));
     }
 }

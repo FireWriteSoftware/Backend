@@ -137,7 +137,7 @@ class CategoryController extends BaseController
         if ($id != 0) {
             $item = $this->model::find($id);
             if (is_null($item)) {
-                return $this->sendError('Item does not exists.');
+                return $this->sendError(__('base.base.get_not_found'));
             }
 
             $response = [];
