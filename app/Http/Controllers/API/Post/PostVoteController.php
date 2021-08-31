@@ -19,7 +19,7 @@ class PostVoteController extends Controller
         $per_page = $request->get('per_page', 15);
         return (new PostVoteCollection(PostVote::paginate($per_page)))->additional([
             'success' => true,
-            'message' => 'Successfully retrieved votes'
+            'message' => __('base.base.get_all_success')
         ]);
     }
 
@@ -28,13 +28,13 @@ class PostVoteController extends Controller
         $post = Post::find($post_id);
 
         if (is_null($post)) {
-            return $this->sendError('Post does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $per_page = $request->get('per_page', 15);
         return (new PostVoteCollection(PostVote::where('post_id', $post->id)->paginate($per_page)))->additional([
             'success' => true,
-            'message' => 'Successfully retrieved post votes'
+            'message' => __('base.base.get_success')
         ]);
     }
 
@@ -42,17 +42,17 @@ class PostVoteController extends Controller
         $vote = PostVote::find($id);
 
         if (is_null($vote)) {
-            return $this->sendError('Post Vote does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
-        return $this->sendResponse(new PostVoteResource($vote), 'Post Vote retrieved successfully.');
+        return $this->sendResponse(new PostVoteResource($vote), __('base.base.get_success'));
     }
 
     public function vote(Request $request, $post_id) {
         $post = Post::find($post_id);
 
         if (is_null($post)) {
-            return $this->sendError('Post does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $validator = Validator::make($request->all(), [
@@ -68,6 +68,6 @@ class PostVoteController extends Controller
             'user_id' => auth()->user()->id
         ], $request->all());
 
-        return $this->sendResponse(new PostVoteResource($vote), 'Post Vote updated successfully.');
+        return $this->sendResponse(new PostVoteResource($vote), __('base.base.update_success'));
     }
 }
