@@ -30,7 +30,7 @@ class EnvironmentController extends BaseController
             $tmp_con = new mysqli($input['hostname'], $input['username'], $input['password'], $input['database'], $input['port']);
 
             if ($tmp_con->connect_error) {
-                return $this->sendError('Error while connecting to the database.', [
+                return $this->sendError(__('env.mysql_connection_failed'), [
                     'db_response' => $tmp_con->connect_error
                 ]);
             }
@@ -38,7 +38,7 @@ class EnvironmentController extends BaseController
             mysqli_close($tmp_con);
             $tmp_con = null;
         } catch (Exception $e) {
-            return $this->sendError('Error while connecting to the database.', [
+            return $this->sendError(__('env.mysql_connection_failed'), [
                 'db_response' => $tmp_con->connect_error
             ]);
         }
@@ -65,7 +65,7 @@ class EnvironmentController extends BaseController
 
         return $this->sendResponse([
             "config" => config('database.connections.mysql'),
-        ], "Successfully changed mysql connection");
+        ], __('env.mysql_success'));
     }
 
     public function update_mail(Request $request) {
@@ -115,7 +115,7 @@ class EnvironmentController extends BaseController
 
         return $this->sendResponse([
             "config" => config('mail'),
-        ], "Successfully changed mail settings");
+        ], __('env.mail_success'));
     }
 
     function putPermanentEnv($key, $value)
