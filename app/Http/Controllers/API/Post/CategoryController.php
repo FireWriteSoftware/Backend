@@ -72,7 +72,7 @@ class CategoryController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = $this->model::all();
@@ -116,7 +116,7 @@ class CategoryController extends BaseController
 
             $response = $response::additional(array_merge([
                 'success' => true,
-                'message' => 'Successfully retrieved announcements'
+                'message' => __('base.base.get_all_success')
             ],
                 $additional));
         }
@@ -137,7 +137,7 @@ class CategoryController extends BaseController
         if ($id != 0) {
             $item = $this->model::find($id);
             if (is_null($item)) {
-                return $this->sendError('Item does not exists.');
+                return $this->sendError(__('base.base.get_not_found'));
             }
 
             $response = [];
@@ -148,10 +148,10 @@ class CategoryController extends BaseController
                 $response = (new NoDepthCategory($item))->onlyVerified(true);
             }
 
-            return $this->sendResponse($response, 'Successfully fetched item');
+            return $this->sendResponse($response, __('base.base.get_success'));
         } else {
             $data = $this->model::where('parent_id', null)->get();
-            return $this->sendResponse(new MiniCategoryCollection($data), 'Successfully fetched items of page 0');
+            return $this->sendResponse(new MiniCategoryCollection($data), __('base.base.get_success'));
         }
     }
 }

@@ -39,7 +39,7 @@ class PostHistoryController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = $this->model::where('post_id', $post_id);
@@ -70,7 +70,7 @@ class PostHistoryController extends Controller
 
             $response = $response::additional(array_merge([
                 'success' => true,
-                'message' => 'Successfully retrieved announcements'
+                'message' => __('base.base.get_all_success')
             ],
                 $additional));
         }

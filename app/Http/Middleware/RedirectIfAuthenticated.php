@@ -26,7 +26,7 @@ class RedirectIfAuthenticated
                 return response()->json([
                     'success' => false,
                     'data' => [],
-                    'message' => 'Already authenticated'
+                    'message' => __('auth.already_authed')
                 ], 403);
             }
         }
