@@ -34,7 +34,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()){
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         if (Auth::attempt($request->all())) {
@@ -112,7 +112,7 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $input = $request->all();
@@ -191,7 +191,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()){
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $input = $request->all();
@@ -231,7 +231,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()){
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $tokenData = DB::table('password_resets')->where('token', $request->token)->first();
@@ -266,7 +266,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $user = Auth::user();
@@ -295,7 +295,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $user = User::where('email_verification_code', $request->input('token'))->first();
@@ -322,7 +322,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $account = User::find($account_id);

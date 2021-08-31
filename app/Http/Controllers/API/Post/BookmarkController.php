@@ -39,7 +39,7 @@ class BookmarkController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = $this->model::where('post_id', $post_id)->get();
@@ -81,7 +81,7 @@ class BookmarkController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = $this->model::where('category_id', $cat_id)->get();
@@ -123,7 +123,7 @@ class BookmarkController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = $this->model::where('user_id', $user_id)->get();

@@ -57,7 +57,7 @@ class BaseController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = (new $this->model);
@@ -103,7 +103,7 @@ class BaseController extends Controller
 
             $response = $response::additional(array_merge([
                 'success' => true,
-                'message' => 'Successfully retrieved announcements'
+                'message' => 'Successfully retrieved data'
             ],
             $additional));
         }
@@ -138,7 +138,7 @@ class BaseController extends Controller
         $validator = Validator::make($request->all(), $this->validations_create);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = array_merge($request->all(), $this->additionalCreateData);
@@ -163,7 +163,7 @@ class BaseController extends Controller
         $validator = Validator::make($request->all(), $this->validations_update);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $item = $this->model::find($id);

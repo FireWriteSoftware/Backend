@@ -64,7 +64,7 @@ class PostController extends BaseController
         $validator = Validator::make($request->all(), $this->validations_create);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = array_merge($request->all(), $this->additionalCreateData);
@@ -105,7 +105,7 @@ class PostController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $old_post = $post;
@@ -183,7 +183,7 @@ class PostController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = $this->model::where('approved_by', null);

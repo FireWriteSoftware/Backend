@@ -83,7 +83,7 @@ class PostCommentController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         if (!auth()->user()->email_verified_at) {
@@ -111,7 +111,7 @@ class PostCommentController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $comment->content = $input['content'];

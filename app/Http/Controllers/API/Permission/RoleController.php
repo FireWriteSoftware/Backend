@@ -43,7 +43,7 @@ class RoleController extends BaseController
         $validator = Validator::make($request->all(), $this->validations_create);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $this->model::where('is_default', 1)->update(['is_default' => 0]);
@@ -70,7 +70,7 @@ class RoleController extends BaseController
         $validator = Validator::make($request->all(), $this->validations_update);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $item = $this->model::find($id);
