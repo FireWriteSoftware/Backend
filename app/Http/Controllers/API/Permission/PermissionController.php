@@ -56,10 +56,10 @@ class PermissionController extends BaseController
 
         $saved = $item->save();
         $response = new $this->resource($item);
-        $message = 'Item updated successfully.';
+        $message = __('base.base.update_success');
 
         if (!$saved) {
-            $message = 'Item has been skipped, because no columns has been updated.';
+            $message = __('base.base.update_skipped');
         }
 
         return $this->sendResponse($response, $message);
@@ -83,6 +83,6 @@ class PermissionController extends BaseController
             $response[$permission] = auth()->user()->hasPermission($permission);
         }
 
-        return $this->sendResponse($response, 'Successfully tested permissions.');
+        return $this->sendResponse($response, __('permission.test_permission'));
     }
 }
