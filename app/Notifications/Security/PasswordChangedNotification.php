@@ -41,10 +41,10 @@ class PasswordChangedNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("Password has been changed")
-            ->line("You're account's password has been just changed.")
-            ->line('If it was you, you can ignore this email. If not, please try to reset your password using the email method or contact an administrator as soon as possible!')
-            ->action('Login', config('app.url_frontend') . '/login');
+            ->subject(__('auth.mail.password_changed.title'))
+            ->line(__('auth.mail.password_changed.subtitle'))
+            ->line(__('auth.mail.password_changed.not_you'))
+            ->action(__('auth.mail.password_changed.button'), config('app.url_frontend') . '/login');
     }
 
     /**

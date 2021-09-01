@@ -44,10 +44,13 @@ class BookmarkedPostCreated extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line('A post you in your bookmarked category has been created.')
-            ->line($this->post->title . ' written by @' . $this->post->user->name)
-            ->action('Get to the post', config('app.url_frontend') . '/posts/' . $this->post->id)
-            ->line('Consider voting for the post, to give the author feedback.');
+            ->line(__('post.mail.post_created'))
+            ->line(__('post.mail.action', [
+                'title' => $this->post->title,
+                'name' => $this->post->user->name
+            ]))
+            ->action(__('post.mail.link'), config('app.url_frontend') . '/posts/' . $this->post->id)
+            ->line(__('post.mail.call_to_vote'));
     }
 
     /**

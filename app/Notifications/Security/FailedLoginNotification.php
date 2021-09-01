@@ -41,10 +41,10 @@ class FailedLoginNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("Login failed")
-            ->line("Somebody just failed logging into your account.")
-            ->line('If it was you, you can ignore this email. If not, please change your password immediately!')
-            ->action('Login', config('app.url_frontend') . '/login');
+            ->subject(__('auth.mail.login_failed.title'))
+            ->line(__('auth.mail.login_failed.subtitle'))
+            ->line(__('auth.mail.login_failed.not_you'))
+            ->action(__('auth.mail.login_failed.button'), config('app.url_frontend') . '/login');
     }
 
     /**
