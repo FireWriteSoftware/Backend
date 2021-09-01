@@ -41,10 +41,10 @@ class SuccessfulLoginNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("Login was successful")
-            ->line("Somebody just logged into your account.")
-            ->line('If it was you, you can ignore this email. If not, please change your password immediately!')
-            ->action('Login', config('app.url_frontend') . '/login');
+            ->subject(__('auth.mail.login_success.title'))
+            ->line(__('auth.mail.login_success.subtitle'))
+            ->line(__('auth.mail.login_success.not_you'))
+            ->action(__('auth.mail.login_success.button'), config('app.url_frontend') . '/login');
     }
 
     /**
