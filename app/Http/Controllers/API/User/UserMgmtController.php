@@ -29,19 +29,20 @@ class UserMgmtController extends BaseController
             'last_name' => 'max:255',
             'email' => 'email|unique:users,email,' . $account_id,
             'profile_picture' => '',
+            'language' => 'string',
             'role_id' => 'integer|exists:roles,id',
             'verify_mail' => 'boolean',
             'subscribed_newsletter' => 'boolean'
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $account = User::find($account_id);
 
         if (is_null($account)) {
-            return $this->sendError('Invalid user', ['user_id' => $account_id]);
+            return $this->sendError(__('base.relation.invalid_parent'), ['user_id' => $account_id]);
         }
 
         if ($request->has('verify_mail')) {
@@ -62,7 +63,7 @@ class UserMgmtController extends BaseController
 
         $account->sendActivity('Account details has been changed', 'The profile details has been changed through an admin');
 
-        return $this->sendResponse(new UserResource($account, true), 'Successfully updated user details.');
+        return $this->sendResponse(new UserResource($account, true), __('base.base.update_success'));
     }
 
     public function sendPasswordResetNotification(Request $request, $account_id): JsonResponse
@@ -70,7 +71,7 @@ class UserMgmtController extends BaseController
         $account = User::find($account_id);
 
         if (is_null($account)) {
-            return $this->sendError('Invalid user', ['user_id' => $account_id]);
+            return $this->sendError(__('base.relation.invalid_parent'), ['user_id' => $account_id]);
         }
 
         $response = Password::sendResetLink([
@@ -78,7 +79,7 @@ class UserMgmtController extends BaseController
         ]);
         $account->sendActivity('Password-Reset-Email has been sent.', 'A mail to reset the password has been sent to ' . $account->email, $account);
 
-        $message = $response == Password::RESET_LINK_SENT ? 'Mail send successfully' : 'Whoops... Something went wrong...';
+        $message = $response == Password::RESET_LINK_SENT ? __('user.reset_mail_success') : __('user.reset_mail_failed');
 
         return $this->sendResponse([], $message);
     }
@@ -88,20 +89,20 @@ class UserMgmtController extends BaseController
         $account = User::find($account_id);
 
         if (is_null($account)) {
-            return $this->sendError('Invalid user', ['user_id' => $account_id]);
+            return $this->sendError(__('base.relation.invalid_parent'), ['user_id' => $account_id]);
         }
 
         $account->sendEmailVerificationNotification();
         $account->sendActivity('Email-Verification-Email has been sent.', 'A mail to verify the email has been sent to ' . $account->email, $account);
 
-        return $this->sendResponse([], 'Mail send successfully');
+        return $this->sendResponse([], __('user.verify_mail_success'));
     }
 
     public function changePassword(Request $request, $account_id) {
         $account = User::find($account_id);
 
         if (is_null($account)) {
-            return $this->sendError('Invalid user', ['user_id' => $account_id]);
+            return $this->sendError(__('base.relation.invalid_parent'), ['user_id' => $account_id]);
         }
 
         $validator = Validator::make($request->all(), [
@@ -109,25 +110,25 @@ class UserMgmtController extends BaseController
         ]);
 
         if ($validator->fails()){
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $account->password = Hash::make($request->input('password'));
         $account->save();
         $account->sendActivity('Password has been changed', 'The account\'s password has been changed trough an admin', $account);
 
-        return $this->sendResponse([], 'Password changed successfully');
+        return $this->sendResponse([], __('user.password_changed_success'));
     }
 
     public function get_posts($account_id) {
         $account = User::find($account_id);
 
         if (is_null($account)) {
-            return $this->sendError('Invalid user', ['user_id' => $account_id]);
+            return $this->sendError(__('base.relation.invalid_parent'), ['user_id' => $account_id]);
         }
 
         $posts = Post::where('user_id', $account_id)->get();
-        return $this->sendResponse(new PostCollection($posts), 'Successfully retrieved user posts');
+        return $this->sendResponse(new PostCollection($posts), __('base.base.get_success'));
     }
 
     /**
@@ -140,10 +141,10 @@ class UserMgmtController extends BaseController
     {
         $item = $this->model::find($id);
         if (is_null($item)) {
-            return $this->sendError('Item does not exists.');
+            return $this->sendError(__('base.relation.invalid_parent'));
         }
 
         $response = new $this->resource($item, true);
-        return $this->sendResponse($response, 'Successfully fetched item');
+        return $this->sendResponse($response, __('base.base.get_success'));
     }
 }

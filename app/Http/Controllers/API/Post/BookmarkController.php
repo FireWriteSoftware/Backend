@@ -17,9 +17,9 @@ class BookmarkController extends BaseController
 
     protected $validations_create = [
         'is_category' => 'boolean|required_if:is_post,0',
-        'category_id' => 'required_if:is_category,0|integer|exists:categories,id',
+        'category_id' => 'required_if:is_category,1|integer|exists:categories,id',
         'is_post' => 'boolean|required_if:is_category,0',
-        'post_id' => 'required_if:is_post,0|integer|exists:posts,id'
+        'post_id' => 'required_if:is_post,1|integer|exists:posts,id'
     ];
 
     protected $validations_update = [
@@ -39,7 +39,7 @@ class BookmarkController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = $this->model::where('post_id', $post_id)->get();
@@ -81,7 +81,7 @@ class BookmarkController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = $this->model::where('category_id', $cat_id)->get();
@@ -123,7 +123,7 @@ class BookmarkController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = $this->model::where('user_id', $user_id)->get();

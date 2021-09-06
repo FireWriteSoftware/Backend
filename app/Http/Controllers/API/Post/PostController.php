@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Post;
 use App\Http\Controllers\BaseController;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bookmark;
 use App\Models\Post;
 use App\Http\Resources\PostCollection;
 use App\Http\Resources\Post as PostResource;
@@ -13,7 +14,12 @@ use App\Models\PostHistory;
 use App\Http\Resources\PostHistoryCollection;
 use App\Http\Resources\PostHistory as PostHistoryResource;
 use App\Models\Tag;
+use App\Models\User;
+use App\Notifications\Posts\BookmarkedPostCreated;
+use App\Notifications\Posts\BookmarkedPostUpdate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends BaseController
@@ -51,14 +57,14 @@ class PostController extends BaseController
                     'banned' => true,
                     'bans' => $active_bans
                 ],
-                'message' => "User has post ban",
+                'message' => __('ban.is_post'),
             ], 403);
         }
 
         $validator = Validator::make($request->all(), $this->validations_create);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = array_merge($request->all(), $this->additionalCreateData);
@@ -70,22 +76,22 @@ class PostController extends BaseController
         }
 
         if (is_null($created_object)) {
-            return $this->sendError('Unknown error while creating the model', [], 500);
+            return $this->sendError(__('base.base.store_unknown_error'), [], 500);
         }
 
         $response = new $this->resource($created_object);
-        return $this->sendResponse($response, 'Successfully stored item');
+        return $this->sendResponse($response, __('base.base.store_success'));
     }
 
     public function update(Request $request, $post_id) {
         $post = Post::find($post_id);
 
         if (is_null($post)) {
-            return $this->sendError('Post does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         if (!auth()->user()->hasPermission('posts_update') && $post->user_id !== auth()->user()->id) {
-            return $this->sendError('Access denied.', []);
+            return $this->sendError(__('permission.no_permission'), []);
         }
 
         $input = $request->all();
@@ -99,10 +105,11 @@ class PostController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $old_post = $post;
+
         PostHistory::create([
             'post_id' => $post->id,
             'user_id' => $post->user_id,
@@ -111,6 +118,23 @@ class PostController extends BaseController
             'thumbnail' => $post->thumbnail
         ]);
 
+        if ($post->approved_at != null) {
+            # Didn't got it running using eloquent :(
+            # Post Bookmarks
+            $users = array_map(function ($q) {
+                return $q->id;
+            }, DB::select("SELECT u.id FROM bookmarks b LEFT JOIN users u ON u.id = b.user_id WHERE b.post_id = :id;", ["id" => $post->id]));
+
+            # Category Bookmarks
+            $users = array_merge($users, array_map(function ($q) {
+                return $q->id;
+            }, DB::select("SELECT u.id FROM bookmarks b LEFT JOIN users u ON u.id = b.user_id WHERE b.category_id = :id;", ["id" => $post->category_id])));
+
+            ## Convert to models
+            $users = User::findMany($users);
+            Notification::send($users, new BookmarkedPostUpdate($post));
+        }
+
         $post->title = $input['title'];
         $post->content = $input['content'];
         $post->thumbnail = $input['thumbnail'];
@@ -118,6 +142,13 @@ class PostController extends BaseController
         if ($request->has('approve') && auth()->user()->hasPermission('posts_approve')) {
             $post->approved_by = auth()->user()->id;
             $post->approved_at = now();
+
+            $users = array_map(function ($q) {
+                return $q->id;
+            }, DB::select("SELECT u.id FROM bookmarks b LEFT JOIN users u ON u.id = b.user_id WHERE b.category_id = :id;", ["id" => $post->category_id]));
+
+            $users = User::findMany($users);
+            Notification::send($users, new BookmarkedPostCreated($post));
         }
 
         $post->save();
@@ -125,7 +156,7 @@ class PostController extends BaseController
         return $this->sendResponse([
             'post' => new PostResource($post),
             'history_post' => new PostResource($old_post)
-        ], 'Post updated successfully.');
+        ], __('base.base.update_success'));
     }
 
     public function get_unauthorized_posts(Request $request) {
@@ -143,6 +174,7 @@ class PostController extends BaseController
         $validator = Validator::make($request->all(), [
             'per_page' => 'integer',
             'paginate' => 'boolean',
+            'search' => 'string',
             'sort' => 'array',
             'sort.column' => 'string|required_with:sort',
             'sort.method' => 'integer|required_with:sort',
@@ -151,7 +183,7 @@ class PostController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $data = $this->model::where('approved_by', null);
@@ -159,6 +191,7 @@ class PostController extends BaseController
         $per_page = $request->get('per_page', 15);
         $paginate_data = $request->get('paginate', true);
         $recent = $request->get('recent', 0);
+        $search = $request->get('search');
 
         if ($recent > 0) {
             $data = $data->sortBy('updated_at', SORT_ASC)->take($recent);
@@ -169,6 +202,16 @@ class PostController extends BaseController
                 $request->get('sort.column', 'id'),
                 $request->get('sort.method', SORT_ASC)
             );
+        }
+
+        if ($search) {
+            foreach ((new $this->model())->getFillable() as $inx => $column) {
+                if ($inx === 0) {
+                    $data = $data->where($column, 'LIKE', '%' . $search . '%');
+                } else {
+                    $data = $data->orWhere($column, 'LIKE', '%' . $search . '%');
+                }
+            }
         }
 
         if ($paginate_data) {
@@ -184,7 +227,7 @@ class PostController extends BaseController
 
             $response = $response::additional(array_merge([
                 'success' => true,
-                'message' => 'Successfully retrieved posts'
+                'message' => __('base.base.get_all_success')
             ],
                 $additional));
         }
@@ -195,6 +238,6 @@ class PostController extends BaseController
     public function recent_posts() {
         return $this->sendResponse([
             'posts' => new $this->collection(Post::where('approved_at', '!=', null)->limit(5)->orderByDesc('updated_at')->get()),
-        ], 'Successfully retrieved recent posts');
+        ], __('base.base.get_all_success'));
     }
 }

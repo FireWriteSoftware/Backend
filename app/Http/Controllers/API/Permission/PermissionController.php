@@ -41,7 +41,7 @@ class PermissionController extends BaseController
         $item = $this->model::find($id);
 
         if (is_null($item)) {
-            return $this->sendError('Item does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $validator = Validator::make($request->all(), [
@@ -49,17 +49,17 @@ class PermissionController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $item->update($request->all());
 
         $saved = $item->save();
         $response = new $this->resource($item);
-        $message = 'Item updated successfully.';
+        $message = __('base.base.update_success');
 
         if (!$saved) {
-            $message = 'Item has been skipped, because no columns has been updated.';
+            $message = __('base.base.update_skipped');
         }
 
         return $this->sendResponse($response, $message);
@@ -74,7 +74,7 @@ class PermissionController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $response = [];
@@ -83,6 +83,6 @@ class PermissionController extends BaseController
             $response[$permission] = auth()->user()->hasPermission($permission);
         }
 
-        return $this->sendResponse($response, 'Successfully tested permissions.');
+        return $this->sendResponse($response, __('permission.test_permission'));
     }
 }

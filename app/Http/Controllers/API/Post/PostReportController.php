@@ -15,9 +15,22 @@ class PostReportController extends Controller
 {
     public function index(Request $request) {
         $per_page = $request->get('per_page', 15);
-        return (new PostReportCollection(PostReport::paginate($per_page)))->additional([
+        $search = $request->get('search');
+        $data = (new PostReport);
+
+        if ($search) {
+            foreach ((new PostReport())->getFillable() as $inx => $column) {
+                if ($inx === 0) {
+                    $data = $data->where($column, 'LIKE', '%' . $search . '%');
+                } else {
+                    $data = $data->orWhere($column, 'LIKE', '%' . $search . '%');
+                }
+            }
+        }
+
+        return (new PostReportCollection($data->paginate($per_page)))->additional([
             'success' => true,
-            'message' => 'Successfully retrieved reports'
+            'message' => __('base.base.get_all_success')
         ]);
     }
 
@@ -25,13 +38,13 @@ class PostReportController extends Controller
         $post = Post::find($post_id);
 
         if (is_null($post)) {
-            return $this->sendError('Post does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $per_page = $request->get('per_page', 15);
         return (new PostReportCollection(PostReport::where('post_id', $post->id)->paginate($per_page)))->additional([
             'success' => true,
-            'message' => 'Successfully retrieved post reports'
+            'message' => __('base.base.get_all_success')
         ]);
     }
 
@@ -39,17 +52,17 @@ class PostReportController extends Controller
         $report = Post::find($report_id);
 
         if (is_null($report)) {
-            return $this->sendError('Report does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
-        return $this->sendResponse(new PostReportResource($report), 'Post Report retrieved successfully.');
+        return $this->sendResponse(new PostReportResource($report), __('base.base.get_success'));
     }
 
     public function store(Request $request, $post_id) {
         $post = Post::find($post_id);
 
         if (is_null($post)) {
-            return $this->sendError('Post does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $input = $request->all();
@@ -59,7 +72,7 @@ class PostReportController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $input['post_id'] = $post_id;
@@ -67,14 +80,14 @@ class PostReportController extends Controller
 
         $report = PostReport::create($input);
 
-        return $this->sendResponse(new PostReportResource($report), 'Post Report created successfully');
+        return $this->sendResponse(new PostReportResource($report), __('base.base.store_success'));
     }
 
     public function update(Request $request, $report_id) {
         $report = PostReport::find($report_id);
 
         if (is_null($report)) {
-            return $this->sendError('Post Report does not exists.');
+            return $this->sendError(__('base.base.update_success'));
         }
 
         $input = $request->all();
@@ -85,25 +98,25 @@ class PostReportController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', ['errors' => $validator->errors()], 400);
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
         $report->content = $input['content'];
         $report->active = $input['active'];
         $report->save();
 
-        return $this->sendResponse(new PostReportResource($report), 'Post Report updated successfully.');
+        return $this->sendResponse(new PostReportResource($report), __('base.base.update_success'));
     }
 
     public function destroy(Request $request, $report_id) {
         $report = PostReport::find($report_id);
 
         if (is_null($report)) {
-            return $this->sendError('Post Report does not exists.');
+            return $this->sendError(__('base.base.get_not_found'));
         }
 
         $report->delete();
 
-        return $this->sendResponse([], 'Post Report soft-deleted successfully.');
+        return $this->sendResponse([], __('base.base.soft_delete_success'));
     }
 }

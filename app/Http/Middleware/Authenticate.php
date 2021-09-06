@@ -18,7 +18,7 @@ class Authenticate extends Middleware
         $response = [
             'success' => false,
             'data'    => [],
-            'message' => "Not authenticated",
+            'message' => __('auth.unauthenticated'),
         ];
 
         Activity::create([
@@ -26,7 +26,7 @@ class Authenticate extends Middleware
             'issuer_id' => 1,
             'short' => 'Unauthenticated access',
             'details' => "IP " . $request->ip() . " tried to access on " . url()->full() . " without authentication.",
-            'attributes' => $request->json() ?? '{}'
+            'attributes' => json_encode($request->all()) ?? '{}'
         ]);
 
         return response()->json($response, 401);

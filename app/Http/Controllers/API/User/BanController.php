@@ -41,6 +41,6 @@ class BanController extends BaseController
             'comments' => $bans->where('type', '=', 1)->count(),
             'posts' => $bans->where('type', '=', 2)->count()
         ],
-        'Ban count retrieved successfully');
+        __('user.ban_count'));
     }
 }

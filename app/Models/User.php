@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
-use App\Events\UserSaving;
-use App\Notifications\EmailVerificationNotification;
-use App\Notifications\MailResetPasswordToken;
+use App\Notifications\Auth\EmailVerificationNotification;
+use App\Notifications\Auth\MailResetPasswordToken;
+use App\Notifications\Security\EmailChangedNotification;
+use App\Notifications\Security\FailedLoginNotification;
+use App\Notifications\Security\PasswordChangedNotification;
+use App\Notifications\Security\SuccessfulLoginNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,6 +33,7 @@ class User extends Authenticatable
         'pre_name',
         'last_name',
         'profile_picture',
+        'language',
         'email',
         'password',
         'email_verification_code',
@@ -83,6 +87,25 @@ class User extends Authenticatable
      */
     public function sendEmailVerificationNotification() {
         $this->notify(new EmailVerificationNotification($this->email_verification_code));
+    }
+
+    /**
+     * Add security email helpers
+     */
+    public function sendEmailChangedNotification() {
+        $this->notify(new EmailChangedNotification());
+    }
+
+    public function sendPasswordChangedNotification() {
+        $this->notify(new PasswordChangedNotification());
+    }
+
+    public function sendFailedLoginNotification() {
+        $this->notify(new FailedLoginNotification());
+    }
+
+    public function sendSuccessfulLoginNotification() {
+        $this->notify(new SuccessfulLoginNotification());
     }
 
     /**
