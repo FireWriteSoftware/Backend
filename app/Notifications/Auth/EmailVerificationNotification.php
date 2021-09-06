@@ -70,10 +70,10 @@ class EmailVerificationNotification extends Notification
     protected function buildMailMessage($url)
     {
         return (new MailMessage)
-            ->subject(Lang::get('Verify Email Address'))
-            ->line(Lang::get('Please click the button below to verify your email address.'))
-            ->action(Lang::get('Verify Email Address'), config('app.url_frontend') . '/email/verify?token=' . $this->code)
-            ->line(Lang::get('If you did not create an account, no further action is required.'));
+            ->subject(__('auth.mail.verify_mail.title'))
+            ->line(__('auth.mail.verify_mail.call_click'))
+            ->action(__('auth.mail.verify_mail.button'), config('app.url_frontend') . '/email/verify?token=' . $this->code)
+            ->line(__('auth.mail.verify_mail.not_you'));
     }
 
     /**
