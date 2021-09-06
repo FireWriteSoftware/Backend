@@ -41,10 +41,10 @@ class EmailChangedNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("Email has been changed")
-            ->line("You're account's email has been just changed.")
-            ->line('If it was you, you can ignore this email. If not, please contact an administrator as soon as possible!')
-            ->action('Login', config('app.url_frontend') . '/login');
+            ->subject(__('auth.mail.email_changed.title'))
+            ->line(__('auth.mail.email_changed.subtitle'))
+            ->line(__('auth.mail.email_changed.not_you'))
+            ->action(__('auth.mail.email_changed.button'), config('app.url_frontend') . '/login');
     }
 
     /**

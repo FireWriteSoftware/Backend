@@ -29,6 +29,7 @@ class UserMgmtController extends BaseController
             'last_name' => 'max:255',
             'email' => 'email|unique:users,email,' . $account_id,
             'profile_picture' => '',
+            'language' => 'string',
             'role_id' => 'integer|exists:roles,id',
             'verify_mail' => 'boolean',
             'subscribed_newsletter' => 'boolean'

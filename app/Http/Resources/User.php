@@ -28,6 +28,7 @@ class User extends JsonResource
             'email' => $this->email,
             'pre_name' => $this->pre_name,
             'last_name' => $this->last_name,
+            'language' => $this->language,
             'profile_picture' => $this->profile_picture,
             'role' => new RoleResource($this->role, true)
         ];

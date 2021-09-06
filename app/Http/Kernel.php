@@ -6,6 +6,7 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckBan;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\RolesAuth;
+use App\Http\Middleware\SetLocale;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
@@ -54,6 +55,7 @@ class Kernel extends HttpKernel
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             CheckBan::class,
+            SetLocale::class,
         ],
     ];
 
