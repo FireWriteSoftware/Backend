@@ -83,15 +83,17 @@ class AuthController extends Controller
             $user = User::where('name', $request->get('name'))->first();
         }
 
-        $user->sendFailedLoginNotification();
+        if ($user) {
+            $user->sendFailedLoginNotification();
 
-        Activity::create([
-            'issuer_type' => 0, // 0 => Unknown/Undefined
-            'issuer_id' => 1,
-            'short' => __('auth.login_failed'),
-            'details' => "{$request->ip()} failed to log in into account",
-            'attributes' => json_encode($request->all())
-        ]);
+            Activity::create([
+                'issuer_type' => 0, // 0 => Unknown/Undefined
+                'issuer_id' => 1,
+                'short' => __('auth.login_failed'),
+                'details' => "{$request->ip()} failed to log in into account",
+                'attributes' => json_encode($request->all())
+            ]);
+        }
 
         return $this->sendError(__('auth.login_failed'), ['error' => 'Login failed.']);
     }
