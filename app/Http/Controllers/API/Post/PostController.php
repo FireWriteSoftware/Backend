@@ -97,11 +97,11 @@ class PostController extends BaseController
         $input = $request->all();
 
         $validator = Validator::make($input, [
-            'title' => 'required|string|max:255',
-            'content' => 'string',
-            'approve' => 'boolean',
+            'title' => 'nullable|string|max:255',
+            'content' => 'nullable|string',
+            'approve' => 'nullable|boolean',
             'thumbnail' => 'nullable|string|max:255',
-            'category_id' => 'required'
+            'category_id' => 'nullable|integer|exists:categories,id'
         ]);
 
         if ($validator->fails()) {
