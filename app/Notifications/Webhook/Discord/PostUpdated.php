@@ -42,7 +42,7 @@ class PostUpdated extends Notification
             ->username(config('app.name', 'Articly'))
             ->embeds([
                 [
-                    "title" => 'Post Changed: ' . $this->post->title,
+                    "title" => __('post.webhook.updated', ['title' => $this->post->title]),
                     "description" => $this->post->content,
                     "url" => config('app.url_frontend') . '/posts/' . $this->post->id,
                     "author" => [
