@@ -66,6 +66,10 @@ class RelationController extends Controller
             return  $this->sendError(__('base.relation.invalid_child'), ['child_id' => $parent_id]);
         }
 
+        if ($parent->relations->contains($child)) {
+            return $this->sendError(__('base.relation.duplicate_combi'), ['parent_id' => $parent_id, 'child_id' => $child_id]);
+        }
+
         $parent->relations()->attach($child);
 
         return $this->sendResponse([], __('base.relation.attached_success'));

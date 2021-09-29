@@ -22,5 +22,6 @@ return [
         'checked_success' => 'Successfully verified relationship of items.',
         'attached_success' => 'Successfully attached child to parent.',
         'detached_success' => 'Successfully detached child from parent.',
+        'duplicate_combi' => 'The combination of parent and child is invalid or duplicated.',
     ],
 ];
