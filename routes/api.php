@@ -23,6 +23,7 @@ use App\Http\Controllers\API\Permission\RolesPermissionsController;
 use App\Http\Controllers\API\Post\TagController;
 use App\Http\Controllers\API\SearchController;
 use App\Http\Controllers\API\StorageController;
+use App\Http\Controllers\API\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -780,6 +781,49 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::post('notifications/{notification}/recover', [NotificationController::class, 'recover'])
         ->name('notifications.recover')
         ->middleware(['permission:notifications_recover'])
+    ;
+});
+
+// Webhook System
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::get('webhooks', [WebhookController::class, 'get_all'])
+        ->name('webhooks.index')
+        ->middleware(['permission:webhooks_get_all'])
+    ;
+
+    Route::get('webhooks/{webhook}', [WebhookController::class, 'get_single'])
+        ->name('webhooks.show')
+        ->middleware(['permission:webhooks_get_single'])
+    ;
+
+    Route::post('webhooks', [WebhookController::class, 'store'])
+        ->name('webhooks.store')
+        ->middleware(['permission:webhooks_store'])
+    ;
+
+    Route::put('webhooks/{webhook}', [WebhookController::class, 'update'])
+        ->name('webhooks.update')
+        ->middleware(['permission:webhooks_update'])
+    ;
+
+    Route::delete('webhooks/{webhook}', [WebhookController::class, 'delete'])
+        ->name('webhooks.delete')
+        ->middleware(['permission:webhooks_delete'])
+    ;
+
+    Route::post('webhooks/{webhook}/recover', [WebhookController::class, 'recover'])
+        ->name('webhooks.recover')
+        ->middleware(['permission:webhooks_recover'])
+    ;
+
+    Route::post('webhooks/{webhook}/add', [WebhookController::class, 'add_scope'])
+        ->name('webhooks.add_scope')
+        ->middleware(['permission:webhooks_add_scope'])
+    ;
+
+    Route::post('webhooks/{webhook}/rem', [WebhookController::class, 'rem_scope'])
+        ->name('webhooks.rem_scope')
+        ->middleware(['permission:webhooks_rem_scope'])
     ;
 });
 
