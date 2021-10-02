@@ -6,5 +6,9 @@ return [
         'action' => ':title von :name',
         'link' => 'Zum Post',
         'call_to_vote' => 'Lasse gerne Feedback in Form eines Gefällt mir / Gefällt mir nicht da.'
+    ],
+    'webhook' => [
+        'updated' => 'Post wurde aktualisiert: :title',
+        'created' => 'Ein Post wurde erstellt: :title'
     ]
 ];

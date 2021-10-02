@@ -22,5 +22,6 @@ return [
         'checked_success' => 'Beziehungsstatus der Elemente wurden geprüft.',
         'attached_success' => 'Elemente wurden zusammengefügt.',
         'detached_success' => 'Elemente wurden voneinander gelöst.',
+        'duplicate_combi' => 'Die Kombination aus Über- und Untergeordnetes Element ist ungültig oder existiert bereits.',
     ],
 ];

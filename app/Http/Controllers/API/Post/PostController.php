@@ -15,8 +15,11 @@ use App\Http\Resources\PostHistoryCollection;
 use App\Http\Resources\PostHistory as PostHistoryResource;
 use App\Models\Tag;
 use App\Models\User;
+use App\Models\WebhookScope;
 use App\Notifications\Posts\BookmarkedPostCreated;
 use App\Notifications\Posts\BookmarkedPostUpdate;
+use App\Notifications\Webhook\Discord\PostCreated;
+use App\Notifications\Webhook\Discord\PostUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -97,11 +100,11 @@ class PostController extends BaseController
         $input = $request->all();
 
         $validator = Validator::make($input, [
-            'title' => 'required|string|max:255',
-            'content' => 'string',
-            'approve' => 'boolean',
+            'title' => 'nullable|string|max:255',
+            'content' => 'nullable|string',
+            'approve' => 'nullable|boolean',
             'thumbnail' => 'nullable|string|max:255',
-            'category_id' => 'required'
+            'category_id' => 'nullable|integer|exists:categories,id'
         ]);
 
         if ($validator->fails()) {
@@ -135,9 +138,10 @@ class PostController extends BaseController
             Notification::send($users, new BookmarkedPostUpdate($post));
         }
 
-        $post->title = $input['title'];
-        $post->content = $input['content'];
-        $post->thumbnail = $input['thumbnail'];
+        $data = $request->all();
+        $data['approve'] = null;
+
+        $post->update($data);
 
         if ($request->has('approve') && auth()->user()->hasPermission('posts_approve')) {
             $post->approved_by = auth()->user()->id;
@@ -149,6 +153,18 @@ class PostController extends BaseController
 
             $users = User::findMany($users);
             Notification::send($users, new BookmarkedPostCreated($post));
+
+            $webhooks = WebhookScope::with('webhook')->where('scope', 'posts_create')->get();
+            foreach ($webhooks as $webhook) {
+                $webhook->webhook->notify(new PostCreated($post));
+            }
+        } else {
+            if ($post->approved_at) {
+                $webhooks = WebhookScope::with('webhook')->where('scope', 'posts_create')->get();
+                foreach ($webhooks as $webhook) {
+                    $webhook->webhook->notify(new PostUpdated($post));
+                }
+            }
         }
 
         $post->save();
