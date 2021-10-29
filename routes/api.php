@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AnnouncementController;
+use App\Http\Controllers\API\DocumentController;
 use App\Http\Controllers\API\EnvironmentController;
 use App\Http\Controllers\API\Post\BookmarkController;
 use App\Http\Controllers\API\Post\PostCommentController;
@@ -781,6 +782,49 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::post('notifications/{notification}/recover', [NotificationController::class, 'recover'])
         ->name('notifications.recover')
         ->middleware(['permission:notifications_recover'])
+    ;
+});
+
+// Document System
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::get('documents', [DocumentController::class, 'get_all'])
+        ->name('documents.index')
+        ->middleware(['permission:documents_get_all'])
+    ;
+
+    Route::get('documents/own', [DocumentController::class, 'get_own'])
+        ->name('documents.get_own')
+        ->middleware(['permission:documents_get_own'])
+    ;
+
+    Route::get('documents/{document}', [DocumentController::class, 'get_single'])
+        ->name('documents.get_single')
+        ->middleware(['permission:documents_get_single'])
+    ;
+
+    Route::post('documents', [DocumentController::class, 'store'])
+        ->name('documents.create')
+        ->middleware(['permission:documents_create'])
+    ;
+
+    Route::put('documents/{document}', [DocumentController::class, 'update'])
+        ->name('documents.update')
+        ->middleware(['permission:documents_update'])
+    ;
+
+    Route::delete('documents/{document}', [DocumentController::class, 'delete'])
+        ->name('documents.delete')
+        ->middleware(['permission:documents_delete'])
+    ;
+
+    Route::delete('documents/{document}/force', [DocumentController::class, 'force_delete'])
+        ->name('documents.force_delete')
+        ->middleware(['permission:documents_force_delete'])
+    ;
+
+    Route::post('documents/{document}/recover', [DocumentController::class, 'recover'])
+        ->name('documents.recover')
+        ->middleware(['permission:documents_recover'])
     ;
 });
 
