@@ -17,7 +17,7 @@ class BadgeController extends BaseController
         'title' => 'required|max:255',
         'description' => '',
         'icon' => 'required',
-        'color' => 'required|regex:^(?:[0-9a-fA-F]{3}){1,2}$^',
+        'color' => 'nullable|regex:^(?:[0-9a-fA-F]{3}){1,2}$^',
         'is_role_badge' => 'boolean',
         'role_id' => 'required_if:is_role_badge,true'
     ];
