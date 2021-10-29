@@ -42,8 +42,8 @@ class PostCreated extends Notification
             ->username(config('app.name', 'Articly'))
             ->embeds([
                 [
-                    "title" => __('post.webhook.created', ['title' => $this->post->title]),
-                    "description" => $this->post->content,
+                    "title" => __('post.webhook.created'),
+                    "description" => $this->post->title,
                     "url" => config('app.url_frontend') . '/posts/' . $this->post->id,
                     "author" => [
                         "name" => $this->post->user->name,
