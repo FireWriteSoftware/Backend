@@ -31,6 +31,7 @@ class NoDepthCategory extends JsonResource
             'thumbnail' => $this->thumbnail,
             'user' => new UserResource($this->user),
             'parent_id' => $this->parent_id,
+            'is_bookmarked' => $this->is_bookmarked(),
             'children' => new MiniCategoryCollection($this->subcategory),
             'posts' => new PostCollection($this->onlyVerified ? $this->posts->where('approved_at', '!=', null) : $this->posts),
             'created_at' => $this->created_at->format('Y-m-d h:m:i'),

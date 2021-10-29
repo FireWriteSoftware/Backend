@@ -21,6 +21,7 @@ class MiniCategory extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'thumbnail' => $this->thumbnail,
+            'is_bookmarked' => $this->is_bookmarked(),
             'user' => new UserResource($this->user),
             'created_at' => $this->created_at->format('Y-m-d h:m:i'),
             'updated_at' => $this->updated_at->format('Y-m-d h:m:i')
