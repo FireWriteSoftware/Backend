@@ -29,7 +29,6 @@ class Document extends JsonResource
         if ($this->is_post) $data['post'] = $this->post;
         if ($this->file_name) $data['file_name'] = $this->file_name;
         if ($this->expires_at) $data['expires_at'] = $this->expires_at->format('Y-m-d h:m:i');
-        if ($this->password) $data['password'] = Crypt::decrypt($this->password);
         if ($this->max_downloads) $data['max_downloads'] = $this->max_downloads;
 
         return $data;
