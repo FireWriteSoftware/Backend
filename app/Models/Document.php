@@ -17,6 +17,7 @@ class Document extends Model
         'category_id',
         'is_post',
         'post_id',
+        'title',
         'file_name',
         'expires_at',
         'password',
