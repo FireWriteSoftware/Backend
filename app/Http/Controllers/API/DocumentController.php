@@ -98,7 +98,7 @@ class DocumentController extends Controller
         }
 
         $data = $request->all();
-        if ($request->has('password')) $data['password'] = Crypt::encrypt($data['password']);
+        if ($request->has('password')) $data['password'] = Hash::make($data['password']);
         $result = $request->file('file')->store('public');
         $data['file_name'] = Storage::url($result);
         $data['file'] = null;
