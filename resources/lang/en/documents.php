@@ -7,5 +7,6 @@ return [
     ],
     'downloads' => [
         'reached_limit' => 'The maximum download count is reached.'
-    ]
+    ],
+    'expired' => 'The time limit expired.'
 ];

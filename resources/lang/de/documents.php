@@ -7,5 +7,6 @@ return [
     ],
     'downloads' => [
         'reached_limit' => 'Die maximale Download-Anzahl ist erreicht.'
-    ]
+    ],
+    'expired' => 'Das Dokument ist abgelaufen.'
 ];
