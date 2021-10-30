@@ -29,6 +29,10 @@ class Document extends Model
         'expires_at'
     ];
 
+    protected $hidden = [
+      'password'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
