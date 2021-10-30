@@ -160,7 +160,7 @@ class PostController extends BaseController
             }
         } else {
             if ($post->approved_at) {
-                $webhooks = WebhookScope::with('webhook')->where('scope', 'posts_create')->get();
+                $webhooks = WebhookScope::with('webhook')->where('scope', 'posts_update')->get();
                 foreach ($webhooks as $webhook) {
                     $webhook->webhook->notify(new PostUpdated($post));
                 }
