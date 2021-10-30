@@ -7,6 +7,7 @@ use App\Http\Resources\DocumentCollection;
 use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -112,8 +113,26 @@ class DocumentController extends Controller
         return $this->sendResponse($response, __('base.base.store_success'));
     }
 
-    public function get_single(Document $document)
+    public function get_single(Request $request, Document $document)
     {
+        $validator = Validator::make($request->all(), [
+            'password' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
+        }
+
+        if ($document->password) {
+            if (!$request->has('password')) {
+                return $this->sendError(__('documents.password.required'));
+            }
+
+            if (Hash::check($request->get('password'), $document->password)) {
+                return $this->sendError(__('documents.password.invalid'));
+            }
+        }
+
         $response = new \App\Http\Resources\Document($document);
         return $this->sendResponse($response, __('base.base.get_success'));
     }
