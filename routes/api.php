@@ -792,11 +792,6 @@ Route::group(['middleware' => 'auth:api'], function() {
         ->middleware(['permission:documents_get_all'])
     ;
 
-    Route::get('documents/own', [DocumentController::class, 'get_own'])
-        ->name('documents.get_own')
-        ->middleware(['permission:documents_get_own'])
-    ;
-
     Route::get('documents/{document}', [DocumentController::class, 'get_single'])
         ->name('documents.get_single')
         ->middleware(['permission:documents_get_single'])
