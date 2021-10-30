@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DocumentDownload extends Model
 {
-    use SoftDeletes;
-
     protected $fillable = [
         'user_id',
         'document_id'
