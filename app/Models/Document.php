@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Document extends Model
@@ -43,5 +44,10 @@ class Document extends Model
     {
         if ($this->is_post) return $this->belongsTo(Post::class);
         return null;
+    }
+
+    public function downloads(): HasMany
+    {
+        return $this->hasMany(DocumentDownload::class);
     }
 }

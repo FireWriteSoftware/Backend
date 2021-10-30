@@ -134,6 +134,14 @@ class DocumentController extends Controller
             }
         }
 
+        if ($document->max_downloads > $document->downloads()->count()) {
+            return $this->sendError(__('documents.downloads.reached_limit'));
+        }
+
+        $document->downloads()->create([
+           'user_id' => auth()->id()
+        ]);
+
         $response = new \App\Http\Resources\Document($document);
         return $this->sendResponse($response, __('base.base.get_success'));
     }
