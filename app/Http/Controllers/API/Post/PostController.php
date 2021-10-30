@@ -143,7 +143,7 @@ class PostController extends BaseController
 
         $post->update($data);
 
-        if ($request->has('approve') && auth()->user()->hasPermission('posts_approve')) {
+        if ($request->has('approve') && $request->approve && auth()->user()->hasPermission('posts_approve')) {
             $post->approved_by = auth()->user()->id;
             $post->approved_at = now();
 
