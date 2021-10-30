@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CategoryCollection;
+use App\Http\Resources\PostCollection;
+use App\Http\Resources\TagCollection;
+use App\Http\Resources\UserCollection;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
@@ -56,10 +60,10 @@ class SearchController extends Controller
         }
 
         $query = [
-            "posts" => $posts->distinct()->get(),
-            "cats" => $cats->distinct()->get(),
-            "users" => $users->distinct()->get(),
-            "tags" => $tag_posts
+            "posts" => new PostCollection($posts->distinct()->get()),
+            "cats" => new CategoryCollection($cats->distinct()->get()),
+            "users" => new UserCollection($users->distinct()->get()),
+            "tags" => new TagCollection($tag_posts)
         ];
 
         return $this->sendResponse($query, __('search.search_success', ['keyword' => $exact_term]));
