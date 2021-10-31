@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 class Document extends JsonResource
 {
@@ -22,6 +23,8 @@ class Document extends JsonResource
             'file_name' => $this->file_name,
             'downloads' => $this->downloads()->count(),
             'require_password' => $this->password != null,
+            'mime_type' => Storage::mimeType($this->file_name),
+            'size' => Storage::size($this->file_name),
             'created_at' => $this->created_at->format('Y-m-d h:m:i'),
             'updated_at' => $this->updated_at->format('Y-m-d h:m:i')
         ];
