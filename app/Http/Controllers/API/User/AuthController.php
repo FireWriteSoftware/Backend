@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\User;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Role;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
@@ -31,14 +32,15 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required_without:name',
             'name' => 'required_without:email',
-            'password' => 'required'
+            'password' => 'required',
+            'remember_me' => 'nullable|boolean'
         ]);
 
         if ($validator->fails()){
             return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
-        if (Auth::attempt($request->all())) {
+        if (Auth::attempt($request->only(['email', 'name', 'password']))) {
             $user = Auth::user();
 
             $active_bans = $user->bans()->where(['type' => 0])->get()->filter(function ($b) {
@@ -62,8 +64,17 @@ class AuthController extends Controller
             $user->sendActivity('Successful login.', "$user->name [$user->id] logged in on $now", $user);
             $user->sendSuccessfulLoginNotification();
 
+            $tokenResult = $user->createToken('Personal Access Token');
+            $token = $tokenResult->token;
+
+            if ($request->get('remember_me')) {
+                $token->expires_at = Carbon::now()->addWeek();
+            }
+
+            $token->save();
+
             return $this->sendResponse([
-                'token' => $user->createToken('PersonalAccessToken')->accessToken,
+                'token' => $tokenResult->accessToken,
                 'user' => $user->only([
                     'id',
                     'name',
