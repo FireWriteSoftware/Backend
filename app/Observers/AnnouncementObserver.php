@@ -4,6 +4,9 @@ namespace App\Observers;
 
 use App\Models\Activity;
 use App\Models\Announcement;
+use App\Models\WebhookScope;
+use App\Notifications\Webhook\AnnouncementCreated;
+use App\Notifications\Webhook\Discord\PostUpdated;
 
 class AnnouncementObserver
 {
@@ -14,6 +17,11 @@ class AnnouncementObserver
      */
     public function created(Announcement $announce)
     {
+        $webhooks = WebhookScope::with('webhook')->where('scope', 'announcements')->get();
+        foreach ($webhooks as $webhook) {
+            $webhook->webhook->notify(new AnnouncementCreated($announce));
+        }
+
         Activity::create([
             'issuer_type' => 11, // 11 => Announcement
             'issuer_id' => $announce->id,
