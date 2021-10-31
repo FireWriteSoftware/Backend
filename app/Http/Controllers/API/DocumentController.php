@@ -101,7 +101,7 @@ class DocumentController extends Controller
         $data = $request->all();
         if ($request->has('password')) $data['password'] = Hash::make($data['password']);
         $result = $request->file('file')->store('public');
-        $data['file_name'] = Storage::url($result);
+        $data['file_name'] = config('app.url') . Storage::url($result);
         $data['file'] = null;
         $data['user_id'] = auth()->id();
 
