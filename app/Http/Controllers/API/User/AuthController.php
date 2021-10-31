@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\User;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Role;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
@@ -39,7 +40,7 @@ class AuthController extends Controller
             return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
-        if (Auth::attempt($request->all())) {
+        if (Auth::attempt($request->only(['email', 'name', 'password']))) {
             $user = Auth::user();
 
             $active_bans = $user->bans()->where(['type' => 0])->get()->filter(function ($b) {
