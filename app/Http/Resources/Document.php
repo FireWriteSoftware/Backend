@@ -21,6 +21,7 @@ class Document extends JsonResource
             'title' => $this->title,
             'file_name' => $this->file_name,
             'downloads' => $this->downloads()->count(),
+            'require_password' => $this->password != null,
             'created_at' => $this->created_at->format('Y-m-d h:m:i'),
             'updated_at' => $this->updated_at->format('Y-m-d h:m:i')
         ];
