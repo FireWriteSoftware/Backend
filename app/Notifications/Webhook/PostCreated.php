@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\Webhook\Discord;
+namespace App\Notifications\Webhook;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -42,8 +42,8 @@ class PostCreated extends Notification
             ->username(config('app.name', 'Articly'))
             ->embeds([
                 [
-                    "title" => __('post.webhook.created'),
-                    "description" => $this->post->title,
+                    "title" => $this->post->title,
+                    "description" => __('post.webhook.created', null, config('app.locale')),
                     "url" => config('app.url_frontend') . '/posts/' . $this->post->id,
                     "author" => [
                         "name" => $this->post->user->name,
