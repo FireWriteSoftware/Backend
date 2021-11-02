@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\Webhook\Discord;
+namespace App\Notifications\Webhook;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,15 +9,15 @@ use Illuminate\Notifications\Notification;
 use App\Channels\DiscordMessage;
 use App\Channels\DiscordWebhookChannel;
 
-class PostCreated extends Notification
+class AnnouncementCreated extends Notification
 {
     use Queueable;
 
-    protected $post;
+    protected $announcement;
 
-    public function __construct($post)
+    public function __construct($announcement)
     {
-        $this->post = $post;
+        $this->announcement = $announcement;
     }
 
     /**
@@ -42,12 +42,12 @@ class PostCreated extends Notification
             ->username(config('app.name', 'Articly'))
             ->embeds([
                 [
-                    "title" => __('post.webhook.created'),
-                    "description" => $this->post->title,
-                    "url" => config('app.url_frontend') . '/posts/' . $this->post->id,
+                    "title" => $this->announcement->title,
+                    "description" => $this->announcement->description,
+                    "url" => config('app.url_frontend'),
                     "author" => [
-                        "name" => $this->post->user->name,
-                        "icon_url" => $this->post->user->profile_picture
+                        "name" => $this->announcement->user->name,
+                        "icon_url" => $this->announcement->user->profile_picture
                     ]
                 ]
             ])
