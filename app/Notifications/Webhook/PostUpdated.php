@@ -43,7 +43,7 @@ class PostUpdated extends Notification
             ->embeds([
                 [
                     "title" => $this->post->title,
-                    "description" => __('post.webhook.updated', null, config('app.locale')),
+                    "description" => __('post.webhook.updated', [], config('app.locale')),
                     "url" => config('app.url_frontend') . '/posts/' . $this->post->id,
                     "author" => [
                         "name" => $this->post->user->name,
