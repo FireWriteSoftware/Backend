@@ -3,23 +3,17 @@
 namespace App\Http\Controllers\API\Post;
 
 use App\Http\Controllers\BaseController;
-
-use App\Http\Controllers\Controller;
-use App\Models\Bookmark;
 use App\Models\Post;
 use App\Http\Resources\PostCollection;
 use App\Http\Resources\Post as PostResource;
-
 use App\Models\PostHistory;
-use App\Http\Resources\PostHistoryCollection;
-use App\Http\Resources\PostHistory as PostHistoryResource;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\WebhookScope;
 use App\Notifications\Posts\BookmarkedPostCreated;
 use App\Notifications\Posts\BookmarkedPostUpdate;
-use App\Notifications\Webhook\Discord\PostCreated;
-use App\Notifications\Webhook\Discord\PostUpdated;
+use App\Notifications\Webhook\PostCreated;
+use App\Notifications\Webhook\PostUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
