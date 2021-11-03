@@ -6,7 +6,6 @@ use App\Models\Activity;
 use App\Models\Announcement;
 use App\Models\WebhookScope;
 use App\Notifications\Webhook\AnnouncementCreated;
-use App\Notifications\Webhook\Discord\PostUpdated;
 
 class AnnouncementObserver
 {
