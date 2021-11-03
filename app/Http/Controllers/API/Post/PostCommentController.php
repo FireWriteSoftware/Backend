@@ -87,7 +87,7 @@ class PostCommentController extends Controller
         }
 
         if (!auth()->user()->email_verified_at) {
-            return $this->sendError(__('ban.is_comment'), ['errors' => [__('ban.comment_ban_reason')]], 403);
+            return $this->sendError(__('ban.comment_ban_reason'), ['errors' => [__('ban.comment_ban_reason')]], 403);
         }
 
         $input['post_id'] = $post_id;
