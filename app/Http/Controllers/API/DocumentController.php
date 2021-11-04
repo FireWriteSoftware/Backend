@@ -139,7 +139,7 @@ class DocumentController extends Controller
             }
         }
 
-        if ($document->max_downloads > $document->downloads()->count()) {
+        if ($document->downloads()->count() > $document->max_downloads) {
             return $this->sendError(__('documents.downloads.reached_limit'));
         }
 
