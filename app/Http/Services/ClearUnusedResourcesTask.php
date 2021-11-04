@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Models\Category;
+use App\Models\Document;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
@@ -30,6 +31,7 @@ class ClearUnusedResourcesTask
             if ($this->isUsedInCategoryThumbnail($file)) $used = true;
             if ($this->isUsedInPostThumbnail($file)) $used = true;
             if ($this->isUsedInPostContent($file)) $used = true;
+            if ($this->isUsedInDocument($file)) $used = true;
 
             if (!$used) {
                 Storage::delete('public/' . $file);
@@ -58,5 +60,10 @@ class ClearUnusedResourcesTask
     private function isUsedInPostContent($name) {
         $url = config('app.url') . '/storage/' . $name;
         return Post::where('content', 'LIKE', '%' . $url . '%')->exists();
+    }
+
+    private function isUsedInDocument($name) {
+        $url = config('app.url') . '/storage/' . $name;
+        return Document::where('file_name', 'LIKE', '%' . $url . '%')->exists();
     }
 }
