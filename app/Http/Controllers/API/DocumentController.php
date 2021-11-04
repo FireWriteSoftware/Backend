@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -44,6 +45,9 @@ class DocumentController extends Controller
                 $request->get('sort')['method'],
             );
         }
+
+        # Hide expired & limit exceeded documents
+        $data = $data->where('expires_at', '<', DB::raw('NOW()'));
 
         if ($recent > 0) {
             $data = $data->take($recent);
