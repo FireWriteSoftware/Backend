@@ -16,16 +16,14 @@ class Document extends JsonResource
      */
     public function toArray($request)
     {
-        $file = explode('/', $this->file_name);
         $data = [
             'id' => $this->id,
             'user' => new User($this->user),
             'title' => $this->title,
-            'file_name' => $this->file_name,
             'downloads' => $this->downloads()->count(),
             'require_password' => $this->password != null,
-            'mime_type' => Storage::mimeType('public/' . $file[sizeof($file) - 1]),
-            'size' => Storage::size('public/' . $file[sizeof($file) - 1]),
+            'mime_type' => Storage::mimeType($this->file_name),
+            'size' => Storage::size($this->file_name),
             'created_at' => $this->created_at->format('Y-m-d h:m:i'),
             'updated_at' => $this->updated_at->format('Y-m-d h:m:i')
         ];

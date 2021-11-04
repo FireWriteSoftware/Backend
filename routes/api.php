@@ -821,6 +821,8 @@ Route::group(['middleware' => 'auth:api'], function() {
         ->name('documents.recover')
         ->middleware(['permission:documents_recover'])
     ;
+
+    Route::get('documents/{document}/download', [DocumentController::class, 'get_file']);
 });
 
 // Webhook System

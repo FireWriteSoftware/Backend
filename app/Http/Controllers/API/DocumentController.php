@@ -105,8 +105,8 @@ class DocumentController extends Controller
 
         $data = $request->all();
         if ($request->has('password')) $data['password'] = Hash::make($data['password']);
-        $result = $request->file('file')->store('public');
-        $data['file_name'] = config('app.url') . Storage::url($result);
+        $result = $request->file('file')->store('documents');
+        $data['file_name'] = $result;
         $data['file'] = null;
         $data['user_id'] = auth()->id();
 
@@ -147,10 +147,6 @@ class DocumentController extends Controller
         if ($document->expires_at != null || $document->expires_at > Carbon::now()) {
             return $this->sendError(__('documents.expired'));
         }
-
-        $document->downloads()->create([
-           'user_id' => auth()->id()
-        ]);
 
         $response = new \App\Http\Resources\Document($document);
         return $this->sendResponse($response, __('base.base.get_success'));
@@ -214,5 +210,13 @@ class DocumentController extends Controller
         return $this->sendResponse([
             'id' => $item->id
         ], __('base.base.soft_delete_success'));
+    }
+
+    public function get_file(Document $document) {
+        $document->downloads()->create([
+            'user_id' => auth()->id()
+        ]);
+
+        return Storage::get($document->file_name);
     }
 }
