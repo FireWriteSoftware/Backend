@@ -143,7 +143,7 @@ class DocumentController extends Controller
             return $this->sendError(__('documents.downloads.reached_limit'));
         }
 
-        if ($document->expires_at >= Carbon::now()) {
+        if ($document->expires_at != null || $document->expires_at > Carbon::now()) {
             return $this->sendError(__('documents.expired'));
         }
 
