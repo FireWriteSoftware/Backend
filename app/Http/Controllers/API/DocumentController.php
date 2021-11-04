@@ -48,6 +48,7 @@ class DocumentController extends Controller
 
         # Hide expired & limit exceeded documents
         $data = $data->where('expires_at', '<', DB::raw('NOW()'))->orWhere('expires_at', null);
+        $data = $data->has('downloads', '<', DB::raw('max_downloads'))->orWhere('max_downloads', null);
 
         if ($recent > 0) {
             $data = $data->take($recent);
