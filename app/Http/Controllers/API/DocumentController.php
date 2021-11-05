@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DocumentCollection;
+use App\Models\Category;
 use App\Models\Document;
 use App\Models\Post;
 use Carbon\Carbon;
@@ -243,6 +244,23 @@ class DocumentController extends Controller
         $data = Document
                 ::where('is_post', true)
                 ->where('post_id', $post->id)
+                ->where(function ($query) {
+                    $query->where('expires_at', '<', DB::raw('NOW()'))
+                        ->orWhereNull('expires_at');
+                })
+                ->where(function ($query) {
+                    $query->has('downloads', '<', DB::raw('max_downloads'))
+                        ->orWhere('max_downloads', null);
+                });
+
+        $response = (new DocumentCollection($data->get()));
+        return $this->sendResponse($response, __('base.base.get_all_success'));
+    }
+
+    public function get_category_documents(Category $category) {
+        $data = Document
+                ::where('is_category', true)
+                ->where('category_id', $category->id)
                 ->where(function ($query) {
                     $query->where('expires_at', '<', DB::raw('NOW()'))
                         ->orWhereNull('expires_at');

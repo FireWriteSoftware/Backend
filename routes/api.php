@@ -244,6 +244,9 @@ Route::group(['middleware' => 'auth:api'], function() {
         ->middleware(['permission:categories_store'])
     ;
 
+    // Documents
+    Route::get('categories/{category}/documents', [DocumentController::class, 'get_category_documents']);
+
     Route::put('categories/{category}', [CategoryController::class, 'update'])
         ->name('categories.update')
         ->middleware(['permission:categories_update'])
