@@ -606,6 +606,9 @@ Route::group(['middleware' => 'auth:api'], function() {
         ->middleware(['permission:posts_permissions_detach'])
     ;
 
+    // Documents
+    Route::get('posts/{post}/documents', [DocumentController::class, 'get_post_documents']);
+
     // Posts
     Route::get('posts', [PostController::class, 'get_all'])
         ->name('posts.index')

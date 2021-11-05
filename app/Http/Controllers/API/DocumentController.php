@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DocumentCollection;
 use App\Models\Document;
+use App\Models\Post;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -236,5 +237,22 @@ class DocumentController extends Controller
         ]);
 
         return Storage::get($document->file_name);
+    }
+
+    public function get_post_documents(Post $post) {
+        $data = Document
+                ::where('is_post', true)
+                ->where('post_id', $post->id)
+                ->where(function ($query) {
+                    $query->where('expires_at', '<', DB::raw('NOW()'))
+                        ->orWhereNull('expires_at');
+                })
+                ->where(function ($query) {
+                    $query->has('downloads', '<', DB::raw('max_downloads'))
+                        ->orWhere('max_downloads', null);
+                });
+
+        $response = (new DocumentCollection($data->get()));
+        return $this->sendResponse($response, __('base.base.get_all_success'));
     }
 }
