@@ -212,10 +212,28 @@ class DocumentController extends Controller
         ], __('base.base.soft_delete_success'));
     }
 
-    public function get_file(Document $document) {
+    public function get_file(Request $request, Document $document) {
         $document->downloads()->create([
             'user_id' => auth()->id()
         ]);
+
+        if ($document->password) {
+            if (!$request->has('password')) {
+                return $this->sendError(__('documents.password.required'));
+            }
+
+            if (Hash::check($request->get('password'), $document->password)) {
+                return $this->sendError(__('documents.password.invalid'));
+            }
+        }
+
+        if ($document->downloads()->count() > $document->max_downloads) {
+            return $this->sendError(__('documents.downloads.reached_limit'));
+        }
+
+        if ($document->expires_at != null || $document->expires_at > Carbon::now()) {
+            return $this->sendError(__('documents.expired'));
+        }
 
         return Storage::get($document->file_name);
     }
