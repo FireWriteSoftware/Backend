@@ -213,10 +213,6 @@ class DocumentController extends Controller
     }
 
     public function get_file(Request $request, Document $document) {
-        $document->downloads()->create([
-            'user_id' => auth()->id()
-        ]);
-
         if ($document->password) {
             if (!$request->has('password')) {
                 return $this->sendError(__('documents.password.required'));
@@ -234,6 +230,10 @@ class DocumentController extends Controller
         if ($document->expires_at != null || $document->expires_at > Carbon::now()) {
             return $this->sendError(__('documents.expired'));
         }
+
+        $document->downloads()->create([
+            'user_id' => auth()->id()
+        ]);
 
         return Storage::get($document->file_name);
     }
