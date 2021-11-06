@@ -49,8 +49,15 @@ class DocumentController extends Controller
         }
 
         # Hide expired & limit exceeded documents
-        $data = $data->where('expires_at', '<', DB::raw('NOW()'))->orWhere('expires_at', null);
-        $data = $data->has('downloads', '<', DB::raw('max_downloads'))->orWhere('max_downloads', null);
+        $data = $data->where(function ($query) {
+            $query->where('expires_at', '>', DB::raw('NOW()'))
+                ->orWhereNull('expires_at');
+        });
+
+        $data = $data->where(function ($query) {
+            $query->has('downloads', '<', DB::raw('max_downloads'))
+                ->orWhere('max_downloads', null);
+        });
 
         if ($recent > 0) {
             $data = $data->take($recent);
@@ -245,7 +252,7 @@ class DocumentController extends Controller
                 ::where('is_post', true)
                 ->where('post_id', $post->id)
                 ->where(function ($query) {
-                    $query->where('expires_at', '<', DB::raw('NOW()'))
+                    $query->where('expires_at', '>', DB::raw('NOW()'))
                         ->orWhereNull('expires_at');
                 })
                 ->where(function ($query) {
@@ -262,7 +269,7 @@ class DocumentController extends Controller
                 ::where('is_category', true)
                 ->where('category_id', $category->id)
                 ->where(function ($query) {
-                    $query->where('expires_at', '<', DB::raw('NOW()'))
+                    $query->where('expires_at', '>', DB::raw('NOW()'))
                         ->orWhereNull('expires_at');
                 })
                 ->where(function ($query) {
