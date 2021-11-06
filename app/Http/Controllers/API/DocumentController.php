@@ -142,11 +142,11 @@ class DocumentController extends Controller
             }
         }
 
-        if ($document->downloads()->count() > $document->max_downloads) {
+        if ($document->downloads()->count() > $document->max_downloads && $document->max_downloads != null) {
             return $this->sendError(__('documents.downloads.reached_limit'));
         }
 
-        if ($document->expires_at != null || $document->expires_at > Carbon::now()) {
+        if ($document->expires_at != null && $document->expires_at > Carbon::now()) {
             return $this->sendError(__('documents.expired'));
         }
 
@@ -215,21 +215,21 @@ class DocumentController extends Controller
     }
 
     public function get_file(Request $request, Document $document) {
-        if ($document->password) {
+        if ($document->password != null) {
             if (!$request->has('password')) {
                 return $this->sendError(__('documents.password.required'));
             }
 
-            if (Hash::check($request->get('password'), $document->password)) {
+            if (!Hash::check($request->get('password'), $document->password)) {
                 return $this->sendError(__('documents.password.invalid'));
             }
         }
 
-        if ($document->downloads()->count() > $document->max_downloads) {
+        if ($document->downloads()->count() > $document->max_downloads && $document->max_downloads != null) {
             return $this->sendError(__('documents.downloads.reached_limit'));
         }
 
-        if ($document->expires_at != null || $document->expires_at > Carbon::now()) {
+        if ($document->expires_at != null && $document->expires_at > Carbon::now()) {
             return $this->sendError(__('documents.expired'));
         }
 
