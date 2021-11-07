@@ -81,4 +81,8 @@ class Post extends Model
     public function is_bookmarked() {
         return Bookmark::where('user_id', auth()->user()->id)->where('is_post', true)->where('post_id', $this->id)->exists();
     }
+
+    public function documents() {
+        return $this->hasMany(Document::class, 'post_id');
+    }
 }

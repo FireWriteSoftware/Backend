@@ -244,6 +244,9 @@ Route::group(['middleware' => 'auth:api'], function() {
         ->middleware(['permission:categories_store'])
     ;
 
+    // Documents
+    Route::get('categories/{category}/documents', [DocumentController::class, 'get_category_documents']);
+
     Route::put('categories/{category}', [CategoryController::class, 'update'])
         ->name('categories.update')
         ->middleware(['permission:categories_update'])
@@ -606,6 +609,9 @@ Route::group(['middleware' => 'auth:api'], function() {
         ->middleware(['permission:posts_permissions_detach'])
     ;
 
+    // Documents
+    Route::get('posts/{post}/documents', [DocumentController::class, 'get_post_documents']);
+
     // Posts
     Route::get('posts', [PostController::class, 'get_all'])
         ->name('posts.index')
@@ -792,11 +798,6 @@ Route::group(['middleware' => 'auth:api'], function() {
         ->middleware(['permission:documents_get_all'])
     ;
 
-    Route::get('documents/own', [DocumentController::class, 'get_own'])
-        ->name('documents.get_own')
-        ->middleware(['permission:documents_get_own'])
-    ;
-
     Route::get('documents/{document}', [DocumentController::class, 'get_single'])
         ->name('documents.get_single')
         ->middleware(['permission:documents_get_single'])
@@ -826,6 +827,8 @@ Route::group(['middleware' => 'auth:api'], function() {
         ->name('documents.recover')
         ->middleware(['permission:documents_recover'])
     ;
+
+    Route::get('documents/{document}/download', [DocumentController::class, 'get_file']);
 });
 
 // Webhook System
