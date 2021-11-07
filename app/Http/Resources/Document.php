@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 class Document extends JsonResource
 {
@@ -18,7 +19,11 @@ class Document extends JsonResource
         $data = [
             'id' => $this->id,
             'user' => new User($this->user),
-            'file_name' => $this->file_name,
+            'title' => $this->title,
+            'downloads' => $this->downloads()->count(),
+            'require_password' => $this->password != null,
+            'mime_type' => Storage::mimeType($this->file_name),
+            'size' => Storage::size($this->file_name),
             'created_at' => $this->created_at->format('Y-m-d h:m:i'),
             'updated_at' => $this->updated_at->format('Y-m-d h:m:i')
         ];
@@ -27,7 +32,6 @@ class Document extends JsonResource
         if ($this->is_post) $data['post'] = $this->post;
         if ($this->file_name) $data['file_name'] = $this->file_name;
         if ($this->expires_at) $data['expires_at'] = $this->expires_at->format('Y-m-d h:m:i');
-        if ($this->password) $data['password'] = Crypt::decrypt($this->password);
         if ($this->max_downloads) $data['max_downloads'] = $this->max_downloads;
 
         return $data;

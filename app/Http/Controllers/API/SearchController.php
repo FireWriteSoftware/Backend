@@ -7,7 +7,9 @@ use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\PostCollection;
 use App\Http\Resources\TagCollection;
 use App\Http\Resources\UserCollection;
+use App\Http\Resources\DocumentCollection;
 use App\Models\Category;
+use App\Models\Document;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
@@ -32,6 +34,7 @@ class SearchController extends Controller
         $cats = Category::query();
         $users = User::query();
         $tags = Tag::query();
+        $documents = Document::query();
 
         foreach ($term_list as $word) {
             $posts
@@ -50,6 +53,10 @@ class SearchController extends Controller
             $tags
                 ->where('name', 'LIKE', "%$word%")
                 ->orWhere('description', 'LIKE', "%$word%");
+
+            $documents
+                ->where('title', 'LIKE', "%$word%")
+                ->orWhere('file_name', 'LIKE', "%$word%");
         }
 
         $tag_posts = [];
@@ -63,7 +70,8 @@ class SearchController extends Controller
             "posts" => new PostCollection($posts->distinct()->get()),
             "cats" => new CategoryCollection($cats->distinct()->get()),
             "users" => new UserCollection($users->distinct()->get()),
-            "tags" => new TagCollection($tag_posts)
+            "tags" => new TagCollection($tag_posts),
+            "documents" => new DocumentCollection($documents->distinct()->get())
         ];
 
         return $this->sendResponse($query, __('search.search_success', ['keyword' => $exact_term]));

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Document extends Model
@@ -17,6 +18,7 @@ class Document extends Model
         'category_id',
         'is_post',
         'post_id',
+        'title',
         'file_name',
         'expires_at',
         'password',
@@ -25,6 +27,10 @@ class Document extends Model
 
     protected $dates = [
         'expires_at'
+    ];
+
+    protected $hidden = [
+      'password'
     ];
 
     public function user(): BelongsTo
@@ -42,5 +48,10 @@ class Document extends Model
     {
         if ($this->is_post) return $this->belongsTo(Post::class);
         return null;
+    }
+
+    public function downloads(): HasMany
+    {
+        return $this->hasMany(DocumentDownload::class);
     }
 }

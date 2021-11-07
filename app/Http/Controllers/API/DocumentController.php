@@ -4,9 +4,14 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DocumentCollection;
+use App\Models\Category;
 use App\Models\Document;
+use App\Models\Post;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -42,6 +47,17 @@ class DocumentController extends Controller
                 $request->get('sort')['method'],
             );
         }
+
+        # Hide expired & limit exceeded documents
+        $data = $data->where(function ($query) {
+            $query->where('expires_at', '>', DB::raw('NOW()'))
+                ->orWhereNull('expires_at');
+        });
+
+        $data = $data->where(function ($query) {
+            $query->has('downloads', '<', DB::raw('max_downloads'))
+                ->orWhere('max_downloads', null);
+        });
 
         if ($recent > 0) {
             $data = $data->take($recent);
@@ -85,6 +101,7 @@ class DocumentController extends Controller
             'category_id' => 'nullable|integer|exists:categories,id',
             'is_post' => 'nullable|boolean',
             'post_id' => 'nullable|integer|exists:posts,id',
+            'title' => 'required|string|max:255',
             'file' => 'required|max:10240|mimes:doc,docx,odt,jpg,png,jpeg,svg,gif',
             'expires_at' => 'nullable|date|after_or_equal:now',
             'password' => 'nullable|string|max:255',
@@ -96,9 +113,9 @@ class DocumentController extends Controller
         }
 
         $data = $request->all();
-        if ($request->has('password')) $data['password'] = Crypt::encrypt($data['password']);
-        $result = $request->file('file')->store('public');
-        $data['file_name'] = Storage::url($result);
+        if ($request->has('password')) $data['password'] = Hash::make($data['password']);
+        $result = $request->file('file')->store('documents');
+        $data['file_name'] = $result;
         $data['file'] = null;
         $data['user_id'] = auth()->id();
 
@@ -112,8 +129,34 @@ class DocumentController extends Controller
         return $this->sendResponse($response, __('base.base.store_success'));
     }
 
-    public function get_single(Document $document)
+    public function get_single(Request $request, Document $document)
     {
+        $validator = Validator::make($request->all(), [
+            'password' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
+        }
+
+        if ($document->password) {
+            if (!$request->has('password')) {
+                return $this->sendError(__('documents.password.required'));
+            }
+
+            if (Hash::check($request->get('password'), $document->password)) {
+                return $this->sendError(__('documents.password.invalid'));
+            }
+        }
+
+        if ($document->downloads()->count() > $document->max_downloads && $document->max_downloads != null) {
+            return $this->sendError(__('documents.downloads.reached_limit'));
+        }
+
+        if ($document->expires_at != null && $document->expires_at > Carbon::now()) {
+            return $this->sendError(__('documents.expired'));
+        }
+
         $response = new \App\Http\Resources\Document($document);
         return $this->sendResponse($response, __('base.base.get_success'));
     }
@@ -125,6 +168,7 @@ class DocumentController extends Controller
             'category_id' => 'nullable|integer|exists:categories,id',
             'is_post' => 'nullable|boolean',
             'post_id' => 'nullable|integer|exists:posts,id',
+            'title' => 'nullable|string|max:255',
             'expires_at' => 'nullable|date|after_or_equal:now',
             'password' => 'nullable|string|max:255',
             'max_downloads' => 'nullable|integer',
@@ -175,5 +219,65 @@ class DocumentController extends Controller
         return $this->sendResponse([
             'id' => $item->id
         ], __('base.base.soft_delete_success'));
+    }
+
+    public function get_file(Request $request, Document $document) {
+        if ($document->password != null) {
+            if (!$request->has('password')) {
+                return $this->sendError(__('documents.password.required'));
+            }
+
+            if (!Hash::check($request->get('password'), $document->password)) {
+                return $this->sendError(__('documents.password.invalid'));
+            }
+        }
+
+        if ($document->downloads()->count() > $document->max_downloads && $document->max_downloads != null) {
+            return $this->sendError(__('documents.downloads.reached_limit'));
+        }
+
+        if ($document->expires_at != null && $document->expires_at > Carbon::now()) {
+            return $this->sendError(__('documents.expired'));
+        }
+
+        $document->downloads()->create([
+            'user_id' => auth()->id()
+        ]);
+
+        return Storage::get($document->file_name);
+    }
+
+    public function get_post_documents(Post $post) {
+        $data = Document
+                ::where('is_post', true)
+                ->where('post_id', $post->id)
+                ->where(function ($query) {
+                    $query->where('expires_at', '>', DB::raw('NOW()'))
+                        ->orWhereNull('expires_at');
+                })
+                ->where(function ($query) {
+                    $query->has('downloads', '<', DB::raw('max_downloads'))
+                        ->orWhere('max_downloads', null);
+                });
+
+        $response = (new DocumentCollection($data->get()));
+        return $this->sendResponse($response, __('base.base.get_all_success'));
+    }
+
+    public function get_category_documents(Category $category) {
+        $data = Document
+                ::where('is_category', true)
+                ->where('category_id', $category->id)
+                ->where(function ($query) {
+                    $query->where('expires_at', '>', DB::raw('NOW()'))
+                        ->orWhereNull('expires_at');
+                })
+                ->where(function ($query) {
+                    $query->has('downloads', '<', DB::raw('max_downloads'))
+                        ->orWhere('max_downloads', null);
+                });
+
+        $response = (new DocumentCollection($data->get()));
+        return $this->sendResponse($response, __('base.base.get_all_success'));
     }
 }
