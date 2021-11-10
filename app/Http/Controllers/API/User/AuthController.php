@@ -209,7 +209,7 @@ class AuthController extends Controller
         }
 
         $input = $request->all();
-        $user = User::where('email', $input['email'])->first();
+        $user = User::where('email', $input['email']);
 
         if (!$user->exists()) {
             return $this->sendError(__('auth.invalid_email'), ['email' => $input['email']]);
