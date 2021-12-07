@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->call(new ClearUnusedResourcesTask)->days(2);
+        $schedule->command('model:prune')->daily();
     }
 
     /**
