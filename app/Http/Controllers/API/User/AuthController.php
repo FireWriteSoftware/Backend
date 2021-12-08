@@ -208,11 +208,10 @@ class AuthController extends Controller
             return $this->sendError(__('validation.validation_error'), ['errors' => $validator->errors()], 400);
         }
 
-        $input = $request->all();
-        $user = User::where('email', $input['email']);
+        $user = User::where('email', $request->email);
 
         if (!$user->exists()) {
-            return $this->sendError(__('auth.invalid_email'), ['email' => $input['email']]);
+            return $this->sendError(__('auth.invalid_email'), ['email' => $request->email]);
         }
         $user = $user->first();
 
