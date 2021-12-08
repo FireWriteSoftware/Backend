@@ -214,6 +214,7 @@ class AuthController extends Controller
         if (!$user->exists()) {
             return $this->sendError(__('auth.invalid_email'), ['email' => $input['email']]);
         }
+        $user = $user->first();
 
         $token = Str::random(40);
 
