@@ -102,7 +102,7 @@ class DocumentController extends Controller
             'is_post' => 'nullable|boolean',
             'post_id' => 'nullable|integer|exists:posts,id',
             'title' => 'required|string|max:255',
-            'file' => 'required|max:10240|mimes:doc,docx,odt,jpg,png,jpeg,svg,gif',
+            'file' => 'required|max:10240|mimes:doc,docx,odt,jpg,png,jpeg,svg,gif,pdf,md',
             'expires_at' => 'nullable|date|after_or_equal:now',
             'password' => 'nullable|string|max:255',
             'max_downloads' => 'nullable|integer',
