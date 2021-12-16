@@ -690,6 +690,11 @@ Route::group(['middleware' => 'auth:api'], function() {
         ->name('users.bookmarks.get_all')
         ->middleware(['permission:users_bookmarks_get_all'])
     ;
+
+    Route::get('user/bookmarks', [BookmarkController::class, 'get_own'])
+        ->name('users.bookmarks.get_own')
+        ->middleware(['permission:users_bookmarks_get_own'])
+    ;
 });
 
 // Announcement System
