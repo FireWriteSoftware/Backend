@@ -7,6 +7,7 @@ use App\Http\Resources\Bookmark as BookmarkResource;
 use App\Http\Resources\BookmarkCollection;
 use App\Models\Bookmark;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class BookmarkController extends BaseController
@@ -153,5 +154,9 @@ class BookmarkController extends BaseController
         }
 
         return $response;
+    }
+
+    public function get_own(Request $request) {
+        return $this->get_users($request, Auth::id());
     }
 }
