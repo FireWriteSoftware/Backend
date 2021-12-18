@@ -17,9 +17,18 @@ class RolesTableSeeder extends Seeder
     {
         Role::insert([
             [
+                'name' => 'Guest',
+                'color' => '242424',
+                'is_default' => false,
+                'is_guest' => true,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
                 'name' => 'User',
                 'color' => '242424',
                 'is_default' => true,
+                'is_guest' => false,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -27,6 +36,7 @@ class RolesTableSeeder extends Seeder
                 'name' => 'Moderator',
                 'color' => '0d8028',
                 'is_default' => false,
+                'is_guest' => false,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -34,6 +44,7 @@ class RolesTableSeeder extends Seeder
                 'name' => 'Administrator',
                 'color' => '800d0d',
                 'is_default' => false,
+                'is_guest' => false,
                 'created_at' => now(),
                 'updated_at' => now()
             ]
