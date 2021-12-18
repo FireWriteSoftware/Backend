@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Activity;
+use App\Models\Role;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -19,9 +20,22 @@ class RolesAuth
     public function handle(Request $request, Closure $next, string $permissions)
     {
         $permissions_exploded = explode('|', $permissions);
+        $target = Role::where('is_guest', true)->first();
+
+        if (!$target) {
+            return response()->json([
+                'success' => false,
+                'data' => [],
+                'message' => 'Guest role not found.'
+            ]);
+        }
+
+        if ($request->user()) {
+            $target = $request->user();
+        }
 
         foreach ($permissions_exploded as $permission) {
-            if (!$request->user()->hasPermission($permission)) {
+            if (!$target->hasPermission($permission)) {
                 $response = [
                     'success' => false,
                     'data'    => $permission,
@@ -34,7 +48,7 @@ class RolesAuth
                     'issuer_type' => 0, // 0 => Unknown/Undefined
                     'issuer_id' => 1,
                     'short' => 'Missing permission',
-                    'details' => $request->user()->name . " [" . $request->user()->id . "] tried to access on " . url()->full() . " without permissions.",
+                    'details' => $target->name . " [" . $target->id . "] tried to access on " . url()->full() . " without permissions.",
                     'attributes' => '{}'
                 ]);
 
