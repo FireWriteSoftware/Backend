@@ -53,7 +53,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function() {
     Route::post('password/reset', [AuthController::class, 'reset_password']);
     Route::post('email/confirm', [AuthController::class, 'confirm_email']);
 
-    Route::group([], function () {
+    Route::group(['middleware' => 'auth:api'], function () {
         Route::get('user', [AuthController::class, 'user']);
         Route::post('update-details/{account}', [AuthController::class, 'update_details']);
         Route::post('password/change', [AuthController::class, 'change_password']);
@@ -62,7 +62,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function() {
 });
 
 // Roles & Permissions System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::get('roles', [RoleController::class, 'get_all'])
         ->name('roles.index')
         ->middleware(['permission:roles_get_all'])
@@ -170,7 +170,7 @@ Route::group([], function() {
 });
 
 // Badges System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::get('badges', [BadgeController::class, 'get_all'])
         ->name('badges.get_all')
         ->middleware(['permission:badges_get_all'])
@@ -228,7 +228,7 @@ Route::group([], function() {
 });
 
 // Categories System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::get('categories', [CategoryController::class, 'get_all'])
         ->name('categories.get_all')
         ->middleware(['permission:categories_get_all'])
@@ -280,7 +280,7 @@ Route::group([], function() {
 });
 
 // Tags System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::get('tags', [TagController::class, 'get_all'])
         ->name('tags.get_all')
         ->middleware(['permission:tags_get_all'])
@@ -318,7 +318,7 @@ Route::group([], function() {
 });
 
 // User Management System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::get('users', [UserMgmtController::class, 'get_all'])
         ->name('users.index')
         ->middleware(['permission:users_get_all'])
@@ -371,7 +371,7 @@ Route::group([], function() {
 });
 
 // Ban System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::get('bans', [BanController::class, 'get_all'])
         ->name('bans.index')
         ->middleware(['permission:bans_get_all'])
@@ -446,7 +446,7 @@ Route::group([], function() {
 });
 
 // Posts System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     // Unauthorized
     Route::get('posts/unauthorized', [PostController::class, 'get_unauthorized_posts'])
         ->name('posts.unauthorized')
@@ -649,7 +649,7 @@ Route::group([], function() {
 });
 
 // Bookmark System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::get('bookmarks', [BookmarkController::class, 'get_all'])
         ->name('bookmarks.index')
         ->middleware(['permission:bookmarks_get_all'])
@@ -698,7 +698,7 @@ Route::group([], function() {
 });
 
 // Announcement System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::get('announcements', [AnnouncementController::class, 'get_all'])
         ->name('announcements.index')
         ->middleware(['permission:announcements_get_all'])
@@ -736,7 +736,7 @@ Route::group([], function() {
 });
 
 // Environment System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::post('environment/mysql', [EnvironmentController::class, 'update_mysql'])
         ->name('environment.update_mysql')
         ->middleware(['permission:environment_update_mysql'])
@@ -749,7 +749,7 @@ Route::group([], function() {
 });
 
 // Notification System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::get('notifications', [NotificationController::class, 'get_all'])
         ->name('notifications.index')
         ->middleware(['permission:notifications_get_all'])
@@ -797,7 +797,7 @@ Route::group([], function() {
 });
 
 // Document System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::get('documents', [DocumentController::class, 'get_all'])
         ->name('documents.index')
         ->middleware(['permission:documents_get_all'])
@@ -837,7 +837,7 @@ Route::group([], function() {
 });
 
 // Webhook System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::get('webhooks', [WebhookController::class, 'get_all'])
         ->name('webhooks.index')
         ->middleware(['permission:webhooks_get_all'])
@@ -880,7 +880,7 @@ Route::group([], function() {
 });
 
 // Storage System
-Route::group([], function() {
+Route::group(['middleware' => 'auth:api'], function() {
     Route::post('storage/uploadImage', [StorageController::class, 'upload'])
         ->name('storage.uploadImage')
     ;
@@ -892,4 +892,5 @@ Route::group([], function() {
 
 // Search
 Route::get('search', [SearchController::class, 'search'])
-    ->name('search');
+    ->name('search')
+    ->middleware(['auth:api']);

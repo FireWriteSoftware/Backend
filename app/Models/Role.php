@@ -23,7 +23,6 @@ class Role extends Model
         'description',
         'color',
         'is_default',
-        'is_guest',
         'user_id'
     ];
 
@@ -48,13 +47,5 @@ class Role extends Model
      */
     public function user() {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Permission check
-     */
-    public function hasPermission(string $permission): bool
-    {
-        return $this->relations()->where('name', $permission)->exists();
     }
 }

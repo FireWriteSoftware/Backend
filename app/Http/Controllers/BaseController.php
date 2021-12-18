@@ -20,8 +20,7 @@ class BaseController extends Controller
     public function __construct() {
         $this->middleware(function ($request, $next) {
             $this->additionalCreateData = [
-                'user_id' => Auth::user()->id ?? 0,
-                'guest' => Auth::user() != null
+                'user_id' => Auth::user()->id
             ];
 
             return $next($request);
