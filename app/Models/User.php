@@ -128,7 +128,11 @@ class User extends Authenticatable
      * User has permission
      */
     public function hasPermission(string $permission): bool {
-        return $this->role->relations()->where('name', $permission)->exists();
+        if ($this->role->relations()->where('name', $permission)->first()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
