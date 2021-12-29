@@ -24,7 +24,8 @@ class Post extends Model
         'user_id',
         'category_id',
         'approved_by',
-        'approved_at'
+        'approved_at',
+        'expires_at'
     ];
 
     /**
@@ -32,7 +33,10 @@ class Post extends Model
      *
      * @var array
      */
-    protected $dates = ['approved_at'];
+    protected $dates = [
+        'approved_at',
+        'expires_at'
+    ];
 
     /**
      * User relation
