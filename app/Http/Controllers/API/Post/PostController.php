@@ -31,7 +31,8 @@ class PostController extends BaseController
         'thumbnail' => 'nullable|string|max:255',
         'category_id' => 'required|exists:categories,id',
         'tags' => 'array',
-        'tags.*' => 'integer|exists:tags,id'
+        'tags.*' => 'integer|exists:tags,id',
+        'expires_at' => 'nullable|date_format:Y-m-d H:i:s',
     ];
 
     /**
@@ -98,7 +99,8 @@ class PostController extends BaseController
             'content' => 'nullable|string',
             'approve' => 'nullable|boolean',
             'thumbnail' => 'nullable|string|max:255',
-            'category_id' => 'nullable|integer|exists:categories,id'
+            'category_id' => 'nullable|integer|exists:categories,id',
+            'expires_at' => 'nullable|date_format:Y-m-d H:i:s',
         ]);
 
         if ($validator->fails()) {
