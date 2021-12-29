@@ -43,6 +43,7 @@ class Post extends JsonResource
             'comments_count' => $this->comments->count(),
             'liked' => $liked,
             'is_bookmarked' => $this->is_bookmarked(),
+            'expires_at' => $this->expires_at->format('Y-m-d H:i:s'),
             'created_at' => $this->created_at->format('Y-m-d h:m:i'),
             'updated_at' => $this->updated_at->format('Y-m-d h:m:i')
         ];
